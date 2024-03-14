@@ -1,21 +1,21 @@
-SRCS = ./philo/main.c
-CFLAGS = -Wall -Wextra -Werror
+SRCS = ./philo/main.c\
+		./philo/ft_atoi.c
+CFLAGS = -Wall -Wextra -Werror -pthread -g3
 INCLUDES = ./philo/
 NAME = Philosophers
-PROGRAM = philo
+PROGRAM = ./philo/philo
 CC = cc
 OBJECTS = ${SRCS:.c=.o}
 
 ${NAME}: ${SRCS}
 	echo "Compiling program"
-	${CC} ${CFLAGS} -fsanitize=address -g3 ${SRCS} -I ${INCLUDES} -o ${PROGRAM}
+	${CC} ${CFLAGS} ${SRCS} -I ${INCLUDES} -o ${PROGRAM}
 
-all:
-	${NAME}
+all: ${NAME}
 
 clean:
 	echo "Cleaning files"
-	rm -f ${OBJECTS} ${NAME}
+	rm -f ${OBJECTS}
 
 fclean:	clean
 	echo "Cleaning files and removing archives and program"
