@@ -21,6 +21,8 @@
 # include <limits.h>
 # include <string.h>
 
+# define POOPOO_USAGE "Usage: ./philo [Number of Philosophers] [Time to die] [Time to eat] [Time to sleep] optional:[Number of times each Philosopher must eat]"
+
 typedef struct s_int
 {
 	int	value;
