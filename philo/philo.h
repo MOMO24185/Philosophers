@@ -51,7 +51,9 @@ typedef struct s_philo t_philo;
 
 typedef struct s_philos_data
 {
-	t_philo	*philos;
+	int				dead_thread_id;
+	t_philo			*philos;
+	t_args			*args;
 	pthread_mutex_t	philo_mutex;
 }	t_philos_data;
 
@@ -61,7 +63,6 @@ struct s_philo
 	t_time			time;
 	pthread_t		thread;
 	pthread_mutex_t	fork_mutex;
-	t_args			*args;
 	t_philos_data	*data;
 };
 

@@ -30,18 +30,17 @@ void	*say_something(void *var)
 	gettimeofday(&philo->time.end, 0);
 	philo->time.time_in_ms = get_time_in_ms(philo->time.start, philo->time.end);
 	philo->time.timestamp_ms = get_time_in_ms(philo->time.timestamp, philo->time.end);
-	printf("Timestamp: %ldms Thread %d is saying something in %ldms\n", philo->time.timestamp_ms, philo->philo_num, philo->time.time_in_ms); 
+	printf("Timestamp: %ldms Philosopher %d is saying something in %ldms\n", philo->time.timestamp_ms, philo->philo_num, philo->time.time_in_ms); 
 	pthread_mutex_unlock(&philo->fork_mutex);
 	return (NULL);
 }
 
-t_philo	create_philo(int num, struct timeval start, t_args *args, t_philos_data *philosophers)
+t_philo	create_philo(int num, struct timeval start, t_philos_data *philosophers)
 {
 	t_philo	philo;
 
 	philo.philo_num = num;
 	philo.time.timestamp = start;
-	philo.args = args;
 	philo.data = philosophers;
 	return (philo);
 }
@@ -93,6 +92,7 @@ int	main(int argc, char **argv)
 	if (args->num_of_philo == -1)
 		exit (EXIT_FAILURE);
 	philos = malloc(args->num_of_philo * sizeof(t_philo));
+	philosophers.args = args;
 	count = 0;
 	while (count < args->num_of_philo)
 		pthread_mutex_init(&philos[count++].fork_mutex, NULL);
@@ -102,12 +102,12 @@ int	main(int argc, char **argv)
 	philosophers.philos = philos;
 	while (count < args->num_of_philo)
 	{
-		philos[count] = create_philo(count, start, args, &philosophers);
+		philos[count] = create_philo(count, start, &philosophers);
 		if (philos[count].philo_num == -1)
 			return (free(philos), 1);
 		if (pthread_create(&philos[count].thread, NULL, &say_something, (void *)&philos[count]) != 0)
 			philos[count].philo_num = -1;
-		printf("Philo (%d) created\n", philos[count].philo_num);
+		printf("Thread (%d) created\n", philos[count].philo_num);
 		count++;
 	}
 	count = 0;
