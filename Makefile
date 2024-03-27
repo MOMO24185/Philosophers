@@ -1,5 +1,20 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/03/27 11:12:33 by melshafi          #+#    #+#              #
+#    Updated: 2024/03/27 11:14:29 by melshafi         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 SRCS = ./philo/main.c\
-		./philo/ft_atoi.c
+		./philo/ft_atoi.c\
+		./philo/create_destroy.c\
+		./philo/threads.c\
+		./philo/time_management.c
 CFLAGS = -Wall -Wextra -Werror -pthread -g3
 INCLUDES = ./philo/
 NAME = Philosophers
