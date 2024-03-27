@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 13:43:48 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/03/27 13:50:35 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ struct s_philo
 {
 	int				philo_num;
 	int				fork_flag;
+	unsigned long	meal_counter;
 	t_time			time;
 	pthread_t		thread;
 	pthread_mutex_t	data_mutex;

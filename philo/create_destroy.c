@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:05 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 13:04:42 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:19:05 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,5 +77,7 @@ t_philo	create_philo(int num, struct timeval start, t_philos_data *philosophers)
 	philo.time.start = start;
 	philo.data = philosophers;
 	philo.fork_flag = 0;
+	philo.meal_counter = 0;
+	philo.time.last_meal = 0;
 	return (philo);
 }

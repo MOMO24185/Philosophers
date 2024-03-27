@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:50:53 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 13:40:43 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:22:53 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@ int	philo_eat(t_philo philo)
 
 void	philo_sleep(t_philo philo)
 {
+	philo.meal_counter++;
+	if (philo.meal_counter == philo.data->args->num_to_eat)
+		philo.data->dead_thread_id = philo.philo_num;
 	get_timestamp(&philo, &philo.time.timestamp_ms);
 	printf("\033[0;33m%ld %d is sleeping\n\033[0m",
 		philo.time.timestamp_ms, philo.philo_num);

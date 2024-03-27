@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:12:54 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 13:41:06 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:23:37 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,8 @@ void	*check_death_routine(void *var)
 	philosophers = var;
 	while (1)
 	{
-		pthread_mutex_lock(&philosophers->death_mutex);
 		if (philosophers->dead_thread_id != 0)
 			break ;
-		pthread_mutex_unlock(&philosophers->death_mutex);
 	}
 	philo = philosophers->philos[philosophers->dead_thread_id];
 	get_timestamp(&philo, &philo.time.timestamp_ms);
@@ -38,8 +36,15 @@ void	*routine(void *var)
 
 	philo = var;
 	get_timestamp(philo, &philo->time.timestamp_ms);
-	while (philo->time.timestamp_ms < philo->data->args->time_to_die)
+	while (philo->time.timestamp_ms - philo->time.last_meal
+		< philo->data->args->time_to_die)
+	{
+		if ((philo->data->args->num_to_eat != 0
+				&& philo->meal_counter == philo->data->args->num_to_eat))
+			break ;
 		philo_eat(*philo);
+		usleep(1);
+	}
 	pthread_mutex_lock(&philo->fork_mutex);
 	philo->data->dead_thread_id = philo->philo_num;
 	pthread_mutex_unlock(&philo->fork_mutex);
