@@ -6,17 +6,17 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:30 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 12:46:36 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/03/27 13:40:16 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./philo.h"
 
-void	get_timestamp(t_philo *philo)
+void	get_timestamp(t_philo *philo, unsigned long *timestamp)
 {
 	pthread_mutex_lock(&philo->fork_mutex);
 	gettimeofday(&philo->time.end, 0);
-	philo->time.timestamp_ms = get_time_in_ms(philo->time.start,
+	*timestamp = get_time_in_ms(philo->time.start,
 			philo->time.end);
 	pthread_mutex_unlock(&philo->fork_mutex);
 }

@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 09:39:25 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 11:45:52 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/03/27 13:37:43 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ int	main(int argc, char **argv)
 {
 	t_philo			*philos;
 	t_args			*args;
-	struct timeval	start;
 	t_philos_data	philosophers;
 
 	if (argc > 6 || argc < 5)
@@ -42,11 +41,13 @@ int	main(int argc, char **argv)
 		return (printf("%s\n", ERR_ARGS), 1);
 	philos = malloc(args->num_of_philo * sizeof(t_philo));
 	philosophers.args = args;
+	philosophers.dead_thread_id = 0;
+	if (pthread_mutex_init(&philosophers.death_mutex, NULL) != 0)
+		return (free(philos), free(args), 1);
 	if (init_mutex(philos, args->num_of_philo))
 		return (printf("%s\n", ERR_MUTEX_INIT), 1);
 	philosophers.philos = philos;
-	gettimeofday(&start, 0);
-	if (start_pthreads(philos, args, philosophers, start) != 0)
+	if (start_pthreads(philos, args, philosophers) != 0)
 		return (1);
 	if (destroy_threads(philos, args->num_of_philo))
 		return (printf("%s\n", ERR_THREAD_DESTROY), 1);

@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 12:48:21 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/03/27 13:43:48 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,11 @@
 
 typedef struct s_args
 {
-	int	num_of_philo;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	num_to_eat;
+	int				num_of_philo;
+	unsigned int	time_to_die;
+	unsigned int	time_to_eat;
+	unsigned int	time_to_sleep;
+	unsigned int	num_to_eat;
 }	t_args;
 
 typedef struct s_int
@@ -49,6 +49,7 @@ typedef struct s_time
 	struct timeval	start;
 	struct timeval	end;
 	unsigned long	timestamp_ms;
+	unsigned long	last_meal;
 }	t_time;
 
 typedef struct s_philo	t_philo;
@@ -58,13 +59,14 @@ typedef struct s_philos_data
 	int				dead_thread_id;
 	t_philo			*philos;
 	t_args			*args;
+	pthread_t		death_thread;
+	pthread_mutex_t	death_mutex;
 }	t_philos_data;
 
 struct s_philo
 {
 	int				philo_num;
 	int				fork_flag;
-	struct timeval	last_ate_timestamp;
 	t_time			time;
 	pthread_t		thread;
 	pthread_mutex_t	data_mutex;
@@ -87,7 +89,7 @@ void			*routine(void *var);
 
 //Sets up each philosopher with its respective values and pointers needed to
 //function
-t_philo			create_philo(int num, struct timeval start, t_philos_data
+t_philo			create_philo(int num, struct timeval start, t_philos_data \
 					*philosophers);
 
 //Sets up the programs arguments needed for the threads
@@ -97,8 +99,8 @@ t_args			*set_args(int argc, char **argv);
 int				destroy_threads(t_philo *philos, int num_of_philo);
 
 //Begins the process of creating pthreads
-int				start_pthreads(t_philo *philos, t_args *args, t_philos_data
-					philosophers, struct timeval start);
+int				start_pthreads(t_philo *philos, t_args *args, t_philos_data \
+					philosophers);
 
 //Manages forks for a philosopher attempting to eat
 int				philo_eat(t_philo philo);
@@ -110,5 +112,5 @@ void			philo_sleep(t_philo philo);
 void			philo_think(t_philo philo);
 
 //Sets the given philo timestamp to the current time
-void			get_timestamp(t_philo *philo);
+void			get_timestamp(t_philo *philo, unsigned long *timestamp);
 #endif
