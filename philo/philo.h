@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 11:45:49 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/03/27 12:48:21 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ struct s_philo
 {
 	int				philo_num;
 	int				fork_flag;
-	unsigned long	last_ate_timestamp;
+	struct timeval	last_ate_timestamp;
 	t_time			time;
 	pthread_t		thread;
 	pthread_mutex_t	data_mutex;
@@ -99,4 +99,16 @@ int				destroy_threads(t_philo *philos, int num_of_philo);
 //Begins the process of creating pthreads
 int				start_pthreads(t_philo *philos, t_args *args, t_philos_data
 					philosophers, struct timeval start);
+
+//Manages forks for a philosopher attempting to eat
+int				philo_eat(t_philo philo);
+
+//Sleeps for time_to_sleep amount of time
+void			philo_sleep(t_philo philo);
+
+//Only prints current philo state as thinking
+void			philo_think(t_philo philo);
+
+//Sets the given philo timestamp to the current time
+void			get_timestamp(t_philo *philo);
 #endif

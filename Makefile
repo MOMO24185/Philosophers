@@ -6,7 +6,7 @@
 #    By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/27 11:12:33 by melshafi          #+#    #+#              #
-#    Updated: 2024/03/27 11:14:29 by melshafi         ###   ########.fr        #
+#    Updated: 2024/03/27 12:50:15 by melshafi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,8 @@ SRCS = ./philo/main.c\
 		./philo/ft_atoi.c\
 		./philo/create_destroy.c\
 		./philo/threads.c\
-		./philo/time_management.c
+		./philo/time_management.c\
+		./philo/philo_tasks.c
 CFLAGS = -Wall -Wextra -Werror -pthread -g3
 INCLUDES = ./philo/
 NAME = Philosophers

@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:12:54 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 11:45:47 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/03/27 12:49:26 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,7 @@ void	*routine(void *var)
 	t_philo	*philo;
 
 	philo = var;
-
-	pthread_mutex_lock(&philo->fork_mutex);
-	gettimeofday(&philo->time.end, 0);
-	philo->time.timestamp_ms = get_time_in_ms(philo->time.start,
-			philo->time.end);
-	pthread_mutex_unlock(&philo->fork_mutex);
-
-	printf("Timestamp: %ldms Philosopher %d is saying something\n",
-		philo->time.timestamp_ms, philo->philo_num);
+	philo_eat(*philo);
 	return (NULL);
 }
 
