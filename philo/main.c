@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 09:39:25 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 13:37:43 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/03 12:54:47 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,10 @@ int	main(int argc, char **argv)
 	if (argc > 6 || argc < 5)
 		return (printf("%s\n", ERR_USAGE), 1);
 	args = set_args(argc, argv);
+	printf("Number of Philo: %d\n", args->num_of_philo);
+	printf("Time to die: %d\n", args->time_to_die);
+	printf("Time to eat: %d\n", args->time_to_eat);
+	printf("Time to sleep: %d\n", args->time_to_sleep);
 	if (args->num_of_philo == -1)
 		return (printf("%s\n", ERR_ARGS), 1);
 	philos = malloc(args->num_of_philo * sizeof(t_philo));
@@ -44,8 +48,6 @@ int	main(int argc, char **argv)
 	philosophers.dead_thread_id = 0;
 	if (pthread_mutex_init(&philosophers.death_mutex, NULL) != 0)
 		return (free(philos), free(args), 1);
-	if (init_mutex(philos, args->num_of_philo))
-		return (printf("%s\n", ERR_MUTEX_INIT), 1);
 	philosophers.philos = philos;
 	if (start_pthreads(philos, args, philosophers) != 0)
 		return (1);
@@ -53,3 +55,6 @@ int	main(int argc, char **argv)
 		return (printf("%s\n", ERR_THREAD_DESTROY), 1);
 	return (free(philos), free(args), 0);
 }
+
+//	to-do:
+// create my own usleep to count time for accurate delay

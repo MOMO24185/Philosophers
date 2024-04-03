@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 13:50:35 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/03 13:13:15 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ typedef struct s_time
 	struct timeval	start;
 	struct timeval	end;
 	unsigned long	timestamp_ms;
-	unsigned long	last_meal;
 }	t_time;
 
 typedef struct s_philo	t_philo;
@@ -59,6 +58,7 @@ typedef struct s_philos_data
 	int				dead_thread_id;
 	t_philo			*philos;
 	t_args			*args;
+	t_time			time;
 	pthread_t		death_thread;
 	pthread_mutex_t	death_mutex;
 }	t_philos_data;
@@ -66,12 +66,14 @@ typedef struct s_philos_data
 struct s_philo
 {
 	int				philo_num;
+	int				time_thread;
 	int				fork_flag;
 	unsigned long	meal_counter;
-	t_time			time;
+	unsigned long	last_meal;
 	pthread_t		thread;
 	pthread_mutex_t	data_mutex;
 	pthread_mutex_t	fork_mutex;
+	pthread_mutex_t	time_mutex;
 	t_philos_data	*data;
 };
 
@@ -90,7 +92,7 @@ void			*routine(void *var);
 
 //Sets up each philosopher with its respective values and pointers needed to
 //function
-t_philo			create_philo(int num, struct timeval start, t_philos_data \
+void			create_philo(t_philo *philos, int num, t_philos_data \
 					*philosophers);
 
 //Sets up the programs arguments needed for the threads

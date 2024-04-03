@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:12:54 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 14:23:37 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/03 13:01:10 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,19 +24,19 @@ void	*check_death_routine(void *var)
 			break ;
 	}
 	philo = philosophers->philos[philosophers->dead_thread_id];
-	get_timestamp(&philo, &philo.time.timestamp_ms);
+	get_timestamp(&philo, &philo.data->time.timestamp_ms);
 	printf("\033[0;31m%ld %d died\n\033[0m",
-		philo.time.timestamp_ms, philo.philo_num);
+		philo.data->time.timestamp_ms, philo.philo_num);
 	return (NULL);
 }
 
-void	*routine(void *var)
+void	*time_routine(void *var)
 {
 	t_philo	*philo;
 
 	philo = var;
-	get_timestamp(philo, &philo->time.timestamp_ms);
-	while (philo->time.timestamp_ms - philo->time.last_meal
+	get_timestamp(philo, &philo->data->time.timestamp_ms);
+	while (philo->data->time.timestamp_ms - philo->last_meal
 		< philo->data->args->time_to_die)
 	{
 		if ((philo->data->args->num_to_eat != 0
@@ -45,9 +45,38 @@ void	*routine(void *var)
 		philo_eat(*philo);
 		usleep(1);
 	}
-	pthread_mutex_lock(&philo->fork_mutex);
+	if (!pthread_mutex_lock(&philo->data_mutex))
+	{
+		philo->data->dead_thread_id = philo->philo_num;
+		pthread_mutex_unlock(&philo->data_mutex);
+	}
+	return (NULL);
+}
+
+void	*routine(void *var)
+{
+	t_philo	*philo;
+
+	philo = var;
+	get_timestamp(philo, &philo->data->time.timestamp_ms);
+	while (1)
+	{
+		pthread_mutex_lock(&philo->data_mutex);
+		if ((philo->data->args->num_to_eat != 0
+				&& philo->meal_counter == philo->data->args->num_to_eat)
+				|| philo->data->time.timestamp_ms - philo->last_meal
+				< philo->data->args->time_to_die)
+			{
+			pthread_mutex_unlock(&philo->data_mutex);
+			break ;
+			}
+		pthread_mutex_unlock(&philo->data_mutex);
+		philo_eat(*philo);
+		usleep(1);
+	}
+	pthread_mutex_lock(&philo->data_mutex);
 	philo->data->dead_thread_id = philo->philo_num;
-	pthread_mutex_unlock(&philo->fork_mutex);
+	pthread_mutex_unlock(&philo->data_mutex);
 	return (NULL);
 }
 
@@ -61,9 +90,12 @@ int	start_pthreads(t_philo *philos, t_args *args, t_philos_data philosophers)
 			(void *)&philosophers) != 0)
 		return (printf("%s\n", ERR_PTHREAD), free(philos), free(args), 1);
 	gettimeofday(&start, 0);
+	philosophers.time.start = start;
+	if (init_mutex(philos, args->num_of_philo))
+		return (printf("%s\n", ERR_MUTEX_INIT), 1);
 	while (++count < args->num_of_philo)
 	{
-		philos[count] = create_philo(count, start, &philosophers);
+		create_philo(&philos[count], count, &philosophers);
 		if (philos[count].philo_num == -1)
 			return (free(philos), free(args), 1);
 		if (pthread_create(&philos[count].thread, NULL, &routine,

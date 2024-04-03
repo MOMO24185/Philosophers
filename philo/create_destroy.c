@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:05 by melshafi          #+#    #+#             */
-/*   Updated: 2024/03/27 14:19:05 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/03 13:01:15 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ int	destroy_threads(t_philo *philos, int num_of_philo)
 	{
 		if (pthread_join(philos[count].thread, NULL) != 0)
 			return (1);
-		if (pthread_mutex_init(&philos[count].fork_mutex, NULL) != 0)
+		if (pthread_mutex_destroy(&philos[count].fork_mutex) != 0)
 			return (1);
-		if (pthread_mutex_init(&philos[count].data_mutex, NULL) != 0)
+		if (pthread_mutex_destroy(&philos[count].data_mutex) != 0)
 			return (1);
 		count++;
 	}
@@ -40,6 +40,8 @@ int	init_mutex(t_philo *philos, int num_of_philo)
 		if (pthread_mutex_init(&philos[count].fork_mutex, NULL) != 0)
 			return (1);
 		if (pthread_mutex_init(&philos[count].data_mutex, NULL) != 0)
+			return (1);
+		if (pthread_mutex_init(&philos[count].time_mutex, NULL) != 0)
 			return (1);
 		count++;
 	}
@@ -69,15 +71,11 @@ t_args	*set_args(int argc, char **argv)
 	return (args);
 }
 
-t_philo	create_philo(int num, struct timeval start, t_philos_data *philosophers)
+void	create_philo(t_philo *philos, int num, t_philos_data *philosophers)
 {
-	t_philo	philo;
-
-	philo.philo_num = num;
-	philo.time.start = start;
-	philo.data = philosophers;
-	philo.fork_flag = 0;
-	philo.meal_counter = 0;
-	philo.time.last_meal = 0;
-	return (philo);
+	philos->philo_num = num;
+	philos->data = philosophers;
+	philos->fork_flag = 0;
+	philos->meal_counter = 0;
+	philos->last_meal = 0;
 }
