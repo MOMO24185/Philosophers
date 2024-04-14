@@ -48,7 +48,7 @@ typedef struct s_time
 {
 	struct timeval	start;
 	struct timeval	end;
-	unsigned long	timestamp_ms;
+	u_int64_t		timestamp_ms;
 }	t_time;
 
 typedef struct s_philo	t_philo;
@@ -68,8 +68,8 @@ struct s_philo
 	int				philo_num;
 	int				time_thread;
 	int				fork_flag;
-	unsigned long	meal_counter;
-	unsigned long	last_meal;
+	u_int64_t		meal_counter;
+	u_int64_t		last_meal;
 	pthread_t		thread;
 	pthread_mutex_t	data_mutex;
 	pthread_mutex_t	fork_mutex;
@@ -103,7 +103,7 @@ int				destroy_threads(t_philo *philos, int num_of_philo);
 
 //Begins the process of creating pthreads
 int				start_pthreads(t_philo *philos, t_args *args, t_philos_data \
-					philosophers);
+					*philosophers);
 
 //Manages forks for a philosopher attempting to eat
 int				philo_eat(t_philo philo);
@@ -115,5 +115,11 @@ void			philo_sleep(t_philo philo);
 void			philo_think(t_philo philo);
 
 //Sets the given philo timestamp to the current time
-void			get_timestamp(t_philo *philo, unsigned long *timestamp);
+void			get_timestamp(t_philo *philo);
+
+//Sets the given philo last_meal timestamp to the current time
+void			get_last_meal_time(t_philo *philo);
+
+//Custom usleep that is more accurate and precise
+void			nap(u_int64_t utime, t_philo philo);
 #endif

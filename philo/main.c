@@ -45,11 +45,11 @@ int	main(int argc, char **argv)
 		return (printf("%s\n", ERR_ARGS), 1);
 	philos = malloc(args->num_of_philo * sizeof(t_philo));
 	philosophers.args = args;
-	philosophers.dead_thread_id = 0;
+	philosophers.dead_thread_id = -1;
 	if (pthread_mutex_init(&philosophers.death_mutex, NULL) != 0)
 		return (free(philos), free(args), 1);
 	philosophers.philos = philos;
-	if (start_pthreads(philos, args, philosophers) != 0)
+	if (start_pthreads(philos, args, &philosophers) != 0)
 		return (1);
 	if (destroy_threads(philos, args->num_of_philo))
 		return (printf("%s\n", ERR_THREAD_DESTROY), 1);
@@ -58,3 +58,4 @@ int	main(int argc, char **argv)
 
 //	to-do:
 // create my own usleep to count time for accurate delay
+// dead_thread_id returns some crazy negative number, check that

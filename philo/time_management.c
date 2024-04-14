@@ -12,11 +12,20 @@
 
 #include "./philo.h"
 
-void	get_timestamp(t_philo *philo, unsigned long *timestamp)
+void	get_timestamp(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->time_mutex);
 	gettimeofday(&philo->data->time.end, 0);
-	*timestamp = get_time_in_ms(philo->data->time.start,
+	philo->data->time.timestamp_ms = get_time_in_ms(philo->data->time.start,
+			philo->data->time.end);
+	pthread_mutex_unlock(&philo->time_mutex);
+}
+
+void	get_last_meal_time(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->time_mutex);
+	gettimeofday(&philo->data->time.end, 0);
+	philo->last_meal = get_time_in_ms(philo->data->time.start,
 			philo->data->time.end);
 	pthread_mutex_unlock(&philo->time_mutex);
 }
