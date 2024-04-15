@@ -41,6 +41,8 @@ int	main(int argc, char **argv)
 		|| args->time_to_die < 60 || args->time_to_eat < 60
 		|| args->time_to_sleep < 60)
 		return (printf("%s\n", ERR_ARGS), 1);
+	if (args->num_of_philo == 1)
+		return (0);
 	philos = malloc(args->num_of_philo * sizeof(t_philo));
 	philosophers = malloc(sizeof(t_philos_data));
 	philosophers->args = args;
@@ -56,6 +58,5 @@ int	main(int argc, char **argv)
 }
 
 //	to-do:
-// time routine needs implementing
+// time routine isnt killing threads that go past the death conditions
 // handle 1 philo
-// dont print death on num of times to eat

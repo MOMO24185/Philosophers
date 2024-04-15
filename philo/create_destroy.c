@@ -77,7 +77,8 @@ void	create_philo(t_philo *philos, int num, t_philos_data *philosophers)
 {
 	philos->philo_num = num;
 	philos->data = philosophers;
-	philos->fork_flag = 0;
+	philos->fork_flag = 1;
 	philos->meal_counter = 0;
 	philos->last_meal = 0;
+	philos->thread_continue = 1;
 }

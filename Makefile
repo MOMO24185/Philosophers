@@ -16,7 +16,7 @@ SRCS = ./philo/main.c\
 		./philo/threads.c\
 		./philo/time_management.c\
 		./philo/philo_tasks.c
-CFLAGS = -Wall -Wextra -Werror -pthread -g3
+CFLAGS = -Wall -Wextra -pthread -g3
 INCLUDES = ./philo/
 NAME = Philosophers
 PROGRAM = ./philo/philo
