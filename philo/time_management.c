@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:30 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/15 16:18:59 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/15 19:01:11 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,9 @@
 void	get_timestamp(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->time_mutex);
-	while (!philo->data->time.flag)
-		;
-	philo->data->time.flag = 0;
 	gettimeofday(&philo->data->time.end, 0);
 	philo->data->time.timestamp_ms = get_time_in_ms(philo->data->time.start,
 			philo->data->time.end);
-	philo->data->time.flag = 1;
 	pthread_mutex_unlock(&philo->time_mutex);
 }
 

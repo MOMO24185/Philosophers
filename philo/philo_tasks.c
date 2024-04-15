@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:50:53 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/15 16:22:42 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/15 19:00:40 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,5 @@ void	philo_think(t_philo *philo)
 	pthread_mutex_lock(&philo->data_mutex);
 	printf("%llu %d is thinking\n\033[0m",
 		philo->data->time.timestamp_ms, philo->philo_num);
-	philo->data->time.flag = 1;
 	pthread_mutex_unlock(&philo->data_mutex);
 }

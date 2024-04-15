@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 09:39:25 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/15 16:38:30 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/15 19:06:29 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,9 @@ int	main(int argc, char **argv)
 	if (argc > 6 || argc < 5)
 		return (printf("%s\n", ERR_USAGE), 1);
 	args = set_args(argc, argv);
-	printf("Number of Philo: %d\n", args->num_of_philo);
-	printf("Time to die: %d\n", args->time_to_die);
-	printf("Time to eat: %d\n", args->time_to_eat);
-	printf("Time to sleep: %d\n", args->time_to_sleep);
-	if (args->num_to_eat != 0)
-		printf("Number of times to eat: %d\n", args->num_to_eat);
-	if (args->num_of_philo == -1)
+	if (args->num_of_philo <= -1 || args->num_of_philo > 200
+		|| args->time_to_die < 60 || args->time_to_eat < 60
+		|| args->time_to_sleep < 60)
 		return (printf("%s\n", ERR_ARGS), 1);
 	philos = malloc(args->num_of_philo * sizeof(t_philo));
 	philosophers = malloc(sizeof(t_philos_data));
@@ -62,5 +58,4 @@ int	main(int argc, char **argv)
 //	to-do:
 // time routine needs implementing
 // handle 1 philo
-// if num of philo more than 200 or any time is less than 60, return invalid values
 // dont print death on num of times to eat
