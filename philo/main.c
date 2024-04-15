@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 09:39:25 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/03 12:54:47 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:38:30 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	main(int argc, char **argv)
 {
 	t_philo			*philos;
 	t_args			*args;
-	t_philos_data	philosophers;
+	t_philos_data	*philosophers;
 
 	if (argc > 6 || argc < 5)
 		return (printf("%s\n", ERR_USAGE), 1);
@@ -41,15 +41,18 @@ int	main(int argc, char **argv)
 	printf("Time to die: %d\n", args->time_to_die);
 	printf("Time to eat: %d\n", args->time_to_eat);
 	printf("Time to sleep: %d\n", args->time_to_sleep);
+	if (args->num_to_eat != 0)
+		printf("Number of times to eat: %d\n", args->num_to_eat);
 	if (args->num_of_philo == -1)
 		return (printf("%s\n", ERR_ARGS), 1);
 	philos = malloc(args->num_of_philo * sizeof(t_philo));
-	philosophers.args = args;
-	philosophers.dead_thread_id = -1;
-	if (pthread_mutex_init(&philosophers.death_mutex, NULL) != 0)
+	philosophers = malloc(sizeof(t_philos_data));
+	philosophers->args = args;
+	philosophers->dead_thread_id = -1;
+	if (pthread_mutex_init(&philosophers->death_mutex, NULL) != 0)
 		return (free(philos), free(args), 1);
-	philosophers.philos = philos;
-	if (start_pthreads(philos, args, &philosophers) != 0)
+	philosophers->philos = philos;
+	if (start_pthreads(philos, args, philosophers) != 0)
 		return (1);
 	if (destroy_threads(philos, args->num_of_philo))
 		return (printf("%s\n", ERR_THREAD_DESTROY), 1);
@@ -57,5 +60,7 @@ int	main(int argc, char **argv)
 }
 
 //	to-do:
-// create my own usleep to count time for accurate delay
-// dead_thread_id returns some crazy negative number, check that
+// time routine needs implementing
+// handle 1 philo
+// if num of philo more than 200 or any time is less than 60, return invalid values
+// dont print death on num of times to eat

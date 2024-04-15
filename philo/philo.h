@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/03 13:13:15 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/15 14:38:35 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct s_time
 {
 	struct timeval	start;
 	struct timeval	end;
+	int				flag;
 	u_int64_t		timestamp_ms;
 }	t_time;
 
@@ -106,13 +107,13 @@ int				start_pthreads(t_philo *philos, t_args *args, t_philos_data \
 					*philosophers);
 
 //Manages forks for a philosopher attempting to eat
-int				philo_eat(t_philo philo);
+int				philo_eat(t_philo *philo);
 
 //Sleeps for time_to_sleep amount of time
-void			philo_sleep(t_philo philo);
+void			philo_sleep(t_philo *philo);
 
 //Only prints current philo state as thinking
-void			philo_think(t_philo philo);
+void			philo_think(t_philo *philo);
 
 //Sets the given philo timestamp to the current time
 void			get_timestamp(t_philo *philo);
@@ -122,4 +123,7 @@ void			get_last_meal_time(t_philo *philo);
 
 //Custom usleep that is more accurate and precise
 void			nap(u_int64_t utime, t_philo philo);
+
+//Checks the conditions needed by a philo to survive and eat again, or die
+int				survival_conditions(t_philo *philo);
 #endif

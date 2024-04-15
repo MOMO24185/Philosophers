@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:05 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/03 13:01:15 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:29:22 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ int	destroy_threads(t_philo *philos, int num_of_philo)
 			return (1);
 		if (pthread_mutex_destroy(&philos[count].data_mutex) != 0)
 			return (1);
+		if (pthread_mutex_destroy(&philos[count].time_mutex) != 0)
+			return (1);
 		count++;
 	}
 	return (0);
@@ -32,7 +34,7 @@ int	destroy_threads(t_philo *philos, int num_of_philo)
 
 int	init_mutex(t_philo *philos, int num_of_philo)
 {
-	int	count;
+	int				count;
 
 	count = 0;
 	while (count < num_of_philo)
@@ -56,9 +58,9 @@ t_args	*set_args(int argc, char **argv)
 	count = 0;
 	args = malloc(sizeof(t_args));
 	args->num_of_philo = ft_atoi(argv[1]).value;
-	args->time_to_die = ft_atoi(argv[2]).value;
-	args->time_to_eat = ft_atoi(argv[3]).value;
-	args->time_to_sleep = ft_atoi(argv[4]).value;
+	args->time_to_die = ft_atoi(argv[2]).value * 1000;
+	args->time_to_eat = ft_atoi(argv[3]).value * 1000;
+	args->time_to_sleep = ft_atoi(argv[4]).value * 1000;
 	if (argc == 6)
 		args->num_to_eat = ft_atoi(argv[5]).value;
 	else
