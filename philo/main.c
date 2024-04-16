@@ -38,8 +38,8 @@ int	main(int argc, char **argv)
 		return (printf("%s\n", ERR_USAGE), 1);
 	args = set_args(argc, argv);
 	if (args->num_of_philo <= -1 || args->num_of_philo > 200
-		|| args->time_to_die < 60 || args->time_to_eat < 60
-		|| args->time_to_sleep < 60)
+		|| args->time_to_die < 60000 || args->time_to_eat < 60000
+		|| args->time_to_sleep < 60000)
 		return (printf("%s\n", ERR_ARGS), 1);
 	if (args->num_of_philo == 1)
 		return (0);
@@ -54,9 +54,5 @@ int	main(int argc, char **argv)
 		return (1);
 	if (destroy_threads(philos, args->num_of_philo))
 		return (printf("%s\n", ERR_THREAD_DESTROY), 1);
-	return (free(philos), free(args), 0);
+	return (free(philos), free(args), free(philosophers), 0);
 }
-
-//	to-do:
-// time routine isnt killing threads that go past the death conditions
-// handle 1 philo

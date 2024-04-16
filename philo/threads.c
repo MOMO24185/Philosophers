@@ -19,22 +19,23 @@ void	*check_death_routine(void *var)
 	int				dead_thread;
 
 	philosophers = var;
-	pthread_mutex_lock(&philosophers->death_mutex);
 	while (1)
 	{
+		pthread_mutex_lock(&philosophers->death_mutex);
 		if (philosophers->dead_thread_id >= 0)
 		{
 			dead_thread = philosophers->dead_thread_id;
 			pthread_mutex_unlock(&philosophers->death_mutex);
 			break ;
 		}
+		pthread_mutex_unlock(&philosophers->death_mutex);
 	}
 	if (dead_thread >= 0 && dead_thread <= 200)
 	{
 		philo = &philosophers->philos[dead_thread];
 		pthread_mutex_lock(&philo->time_mutex);
 		get_timestamp(philo);
-		printf("\033[0;31m%llu %d died\n\033[0m",
+		printf("\033[0;31m%lu %d died\n\033[0m",
 			philo->data->time.timestamp_ms, dead_thread);
 		pthread_mutex_unlock(&philo->time_mutex);
 	}
@@ -48,9 +49,8 @@ void	*time_routine(void *var)
 
 	philo = var;
 	value = survival_conditions(philo);
-	while (!value)
+	while (value == 0)
 		value = survival_conditions(philo);
-	printf("SOMEONE DIED WITH VALUE %d\n", value);
 	pthread_mutex_lock(&philo->data_mutex);
 	philo->thread_continue = 0;
 	pthread_mutex_unlock(&philo->data_mutex);
@@ -76,22 +76,26 @@ void	*routine(void *var)
 	t_philo	*philo;
 
 	philo = var;
-	pthread_mutex_lock(&philo->data_mutex);
-	philo->fork_flag = 0;
-	pthread_mutex_unlock(&philo->data_mutex);
-	if (pthread_create(&philo->time_monitor, NULL, &time_routine, var) != 0)
-		return (printf("%s\n", ERR_PTHREAD), NULL);
+	if (pthread_create(&philo->time_monitor, NULL, &time_routine, var))
+		return (printf("%s\n", ERR_PTHREAD), (void *)1);
 	while (1)
 	{
-		pthread_mutex_lock(&philo->data_mutex);
-		if (!philo->thread_continue)
-		{
-			pthread_mutex_unlock(&philo->data_mutex);
+		if (!check_thread_continue(philo) || !philo_eat(philo))
 			break ;
+		else
+		{
+			pthread_mutex_lock(&philo->data->death_mutex);
+			if (philo->data->dead_thread_id >= 0)
+			{
+				pthread_mutex_unlock(&philo->data->death_mutex);
+				break ;
+			}
+			pthread_mutex_unlock(&philo->data->death_mutex);
+			philo_think(philo);
 		}
-		pthread_mutex_unlock(&philo->data_mutex);
-		philo_eat(philo);
 	}
+	if (pthread_join(philo->time_monitor, NULL) != 0)
+		return (printf("%s\n", ERR_THREAD_DESTROY), (void *)1); 
 	return (NULL);
 }
 
@@ -115,7 +119,7 @@ int	start_pthreads(t_philo *philos, t_args *args, t_philos_data *philosophers)
 	while (++count < args->num_of_philo)
 	{
 		if (philos[count].philo_num == -1 || pthread_create(&philos[count].\
-			thread, NULL, &routine, (void *)&philos[count]) != 0)
+			thread, NULL, &routine, (void *)&philos[count]))
 			return (printf("%s\n", ERR_PTHREAD), free(philos), free(args), 1);
 	}
 	return (0);
@@ -123,6 +127,10 @@ int	start_pthreads(t_philo *philos, t_args *args, t_philos_data *philosophers)
 
 int	survival_conditions(t_philo *philo)
 {
+	pthread_mutex_lock(&philo->data->death_mutex);
+	if (philo->data->dead_thread_id >= 0)
+		return (pthread_mutex_unlock(&philo->data->death_mutex), 3);
+	pthread_mutex_unlock(&philo->data->death_mutex);
 	pthread_mutex_lock(&philo->data_mutex);
 	if (philo->data->args->num_to_eat > 0
 		&& philo->meal_counter >= philo->data->args->num_to_eat)
@@ -131,11 +139,7 @@ int	survival_conditions(t_philo *philo)
 	pthread_mutex_lock(&philo->time_mutex);
 	get_timestamp(philo);
 	if ((philo->data->time.timestamp_ms - philo->last_meal
-			>= philo->data->args->time_to_die))
+			>= (philo->data->args->time_to_die / 1000)))
 		return (pthread_mutex_unlock(&philo->time_mutex), 2);
-	pthread_mutex_unlock(&philo->time_mutex);
-	pthread_mutex_lock(&philo->data->death_mutex);
-	if (philo->data->dead_thread_id >= 0)
-		return (pthread_mutex_unlock(&philo->data->death_mutex), 3);
-	return (pthread_mutex_unlock(&philo->data->death_mutex), 0);
+	return (pthread_mutex_unlock(&philo->time_mutex), 0);
 }

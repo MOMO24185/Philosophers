@@ -25,6 +25,7 @@
  [Time to eat] [Time to sleep] optional:[Number of times each Philosopher\
  must eat]"
 # define ERR_MUTEX_INIT "Mutex Initialization failed"
+# define ERR_TIME "gettimeofday() failed"
 # define ERR_ARGS "Invalid Arguments"
 # define ERR_THREAD_DESTROY "Threads/Mutex's failed to stop"
 # define ERR_PTHREAD "A PTHREAD failed to start"
@@ -110,7 +111,7 @@ int				start_pthreads(t_philo *philos, t_args *args, t_philos_data \
 int				philo_eat(t_philo *philo);
 
 //Sleeps for time_to_sleep amount of time
-void			philo_sleep(t_philo *philo);
+int			philo_sleep(t_philo *philo);
 
 //Only prints current philo state as thinking
 void			philo_think(t_philo *philo);
@@ -126,4 +127,7 @@ void			nap(u_int64_t utime, t_philo philo);
 
 //Checks the conditions needed by a philo to survive and eat again, or die
 int				survival_conditions(t_philo *philo);
+
+//Checks given philo for their continue value to see if they should be dead or alive
+int				check_thread_continue(t_philo *philo);
 #endif

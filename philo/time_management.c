@@ -14,7 +14,11 @@
 
 void	get_timestamp(t_philo *philo)
 {
-	gettimeofday(&philo->data->time.end, 0);
+	if(gettimeofday(&philo->data->time.end, 0))
+	{
+		printf("%s\n", ERR_TIME);
+		return ;
+	}
 	philo->data->time.timestamp_ms = get_time_in_ms(philo->data->time.start,
 			philo->data->time.end);
 }
@@ -22,7 +26,11 @@ void	get_timestamp(t_philo *philo)
 void	get_last_meal_time(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->time_mutex);
-	gettimeofday(&philo->data->time.end, 0);
+	if(gettimeofday(&philo->data->time.end, 0))
+	{
+		printf("%s\n", ERR_TIME);
+		return ;
+	}
 	philo->last_meal = get_time_in_ms(philo->data->time.start,
 			philo->data->time.end);
 	pthread_mutex_unlock(&philo->time_mutex);

@@ -12,11 +12,22 @@
 
 #include "./philo.h"
 
+int	check_thread_continue(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->data_mutex);
+	if (!philo->thread_continue)
+		return (pthread_mutex_unlock(&philo->data_mutex), 0);
+	pthread_mutex_unlock(&philo->data_mutex);
+	return (1);
+}
+
 int	destroy_threads(t_philo *philos, int num_of_philo)
 {
 	int	count;
 
 	count = 0;
+	if (pthread_join(philos->data->death_thread, NULL) != 0)
+			return (1);
 	while (count < num_of_philo)
 	{
 		if (pthread_join(philos[count].thread, NULL) != 0)
@@ -77,7 +88,7 @@ void	create_philo(t_philo *philos, int num, t_philos_data *philosophers)
 {
 	philos->philo_num = num;
 	philos->data = philosophers;
-	philos->fork_flag = 1;
+	philos->fork_flag = -1;
 	philos->meal_counter = 0;
 	philos->last_meal = 0;
 	philos->thread_continue = 1;
