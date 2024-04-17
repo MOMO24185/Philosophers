@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 09:39:25 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/17 16:12:03 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/17 16:42:59 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,3 +59,6 @@ int	main(int argc, char **argv)
 		return (printf("%s\n", ERR_THREAD_DESTROY), 1);
 	return (free(philos), free(args), free(philosophers), 0);
 }
+
+//to-do:
+//depending of the params, sometimes threads still print status messages after a philo dies
