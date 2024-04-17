@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:30 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/17 14:40:53 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/17 16:14:59 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,15 @@ int	check_forks(t_philo *philo, int next)
 	ready_to_eat = 0;
 	pthread_mutex_lock(&philo->fork_mutex);
 	reserved = philo->philo_num;
-	if (philo->fork_flag == -1)
+	if (philo->fork_flag == -1 || philo->fork_flag == reserved)
 	{
 		ready_to_eat++;
 		philo->fork_flag = reserved;
 	}
 	pthread_mutex_unlock(&philo->fork_mutex);
 	pthread_mutex_lock(&philo->data->philos[next].fork_mutex);
-	if (philo->data->philos[next].fork_flag == -1)
+	if (philo->data->philos[next].fork_flag == -1
+		|| philo->data->philos[next].fork_flag == reserved)
 	{
 		ready_to_eat++;
 		philo->data->philos[next].fork_flag = reserved;

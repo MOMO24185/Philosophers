@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:12:54 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/17 14:11:22 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/17 16:14:38 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ void	check_death(t_philo *philo)
 	{
 		philo->data->dead_thread_id = philo->philo_num;
 		pthread_mutex_unlock(&philo->data->death_mutex);
-		pthread_mutex_lock(&philo->time_mutex);
+		pthread_mutex_lock(&philo->data->time.time_mutex);
 		get_timestamp(philo);
-		printf("\033[0;31mTIMESTAMP[%luMS] PHILOSOPHER[%d] DIED\n\033[0m",
+		printf("\033[0;31mTIMESTAMP[%lu]ms PHILOSOPHER[%d] DIED\n\033[0m",
 			philo->data->time.timestamp_ms, philo->philo_num);
-		pthread_mutex_unlock(&philo->time_mutex);
+		pthread_mutex_unlock(&philo->data->time.time_mutex);
 	}
 	else
 		pthread_mutex_unlock(&philo->data->death_mutex);
@@ -38,20 +38,14 @@ void	*time_routine(void *var)
 	value = survival_conditions(philo);
 	while (!value)
 		value = survival_conditions(philo);
-	pthread_mutex_lock(&philo->data_mutex);
-	philo->thread_continue = 0;
-	pthread_mutex_unlock(&philo->data_mutex);
 	if (value == 1)
 	{
 		pthread_mutex_lock(&philo->data->death_mutex);
-		if (philo->data->dead_thread_id == -1)
-			philo->data->dead_thread_id = 999;
+		philo->data->they_ate++;
 		pthread_mutex_unlock(&philo->data->death_mutex);
 	}
 	if (value == 2)
-	{
 		check_death(philo);
-	}
 	return (NULL);
 }
 
@@ -60,9 +54,12 @@ void	*routine(void *var)
 	t_philo	*philo;
 
 	philo = var;
+	if (philo->philo_num % 2 == 0)
+		usleep(philo->data->args->time_to_eat);
 	while (1)
 	{
-		if (check_thread_continue(philo) && philo_eat(philo))
+		if (check_thread_continue(philo) && philo_eat(philo)
+			&& check_thread_continue(philo))
 		{
 			pthread_mutex_lock(&philo->data->death_mutex);
 			if (philo->data->dead_thread_id >= 0)
@@ -115,10 +112,10 @@ int	survival_conditions(t_philo *philo)
 		&& philo->meal_counter >= philo->data->args->num_to_eat)
 		return (pthread_mutex_unlock(&philo->data_mutex), 1);
 	pthread_mutex_unlock(&philo->data_mutex);
-	pthread_mutex_lock(&philo->time_mutex);
+	pthread_mutex_lock(&philo->data->time.time_mutex);
 	get_timestamp(philo);
 	if ((philo->data->time.timestamp_ms - philo->last_meal
 			>= (philo->data->args->time_to_die / 1000)))
-		return (pthread_mutex_unlock(&philo->time_mutex), 2);
-	return (pthread_mutex_unlock(&philo->time_mutex), 0);
+		return (pthread_mutex_unlock(&philo->data->time.time_mutex), 2);
+	return (pthread_mutex_unlock(&philo->data->time.time_mutex), 0);
 }

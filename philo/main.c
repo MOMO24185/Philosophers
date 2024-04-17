@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 09:39:25 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/15 19:06:29 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/17 16:12:03 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,16 @@ int	main(int argc, char **argv)
 	if (args->num_of_philo <= -1 || args->num_of_philo > 200
 		|| args->time_to_die < 60000 || args->time_to_eat < 60000
 		|| args->time_to_sleep < 60000)
-		return (printf("%s\n", ERR_ARGS), 1);
+		return (free(args), printf("%s\n", ERR_ARGS), 1);
 	if (args->num_of_philo == 1)
 		return (0);
 	philos = malloc(args->num_of_philo * sizeof(t_philo));
 	philosophers = malloc(sizeof(t_philos_data));
 	philosophers->args = args;
 	philosophers->dead_thread_id = -1;
+	philosophers->they_ate = 0;
+	if (pthread_mutex_init(&philosophers->time.time_mutex, NULL) != 0)
+		return (free(philos), free(args), 1);
 	if (pthread_mutex_init(&philosophers->death_mutex, NULL) != 0)
 		return (free(philos), free(args), 1);
 	philosophers->philos = philos;

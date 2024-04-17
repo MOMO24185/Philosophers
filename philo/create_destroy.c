@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:05 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/17 14:12:57 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/17 16:21:35 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 int	check_thread_continue(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->data_mutex);
-	if (!philo->thread_continue)
-		return (pthread_mutex_unlock(&philo->data_mutex), 0);
-	pthread_mutex_unlock(&philo->data_mutex);
+	pthread_mutex_lock(&philo->data->death_mutex);
+	if (philo->data->they_ate == philo->data->args->num_of_philo)
+		return (pthread_mutex_unlock(&philo->data->death_mutex), 0);
+	pthread_mutex_unlock(&philo->data->death_mutex);
 	return (1);
 }
 
@@ -36,10 +36,10 @@ int	destroy_threads(t_philo *philos, int num_of_philo)
 			return (1);
 		if (pthread_mutex_destroy(&philos[count].data_mutex) != 0)
 			return (1);
-		if (pthread_mutex_destroy(&philos[count].time_mutex) != 0)
-			return (1);
 		count++;
 	}
+	if (pthread_mutex_destroy(&philos[--count].data->time.time_mutex) != 0)
+		return (1);
 	return (0);
 }
 
@@ -53,8 +53,6 @@ int	init_mutex(t_philo *philos, int num_of_philo)
 		if (pthread_mutex_init(&philos[count].fork_mutex, NULL) != 0)
 			return (1);
 		if (pthread_mutex_init(&philos[count].data_mutex, NULL) != 0)
-			return (1);
-		if (pthread_mutex_init(&philos[count].time_mutex, NULL) != 0)
 			return (1);
 		count++;
 	}
@@ -91,5 +89,4 @@ void	create_philo(t_philo *philos, int num, t_philos_data *philosophers)
 	philos->fork_flag = -1;
 	philos->meal_counter = 0;
 	philos->last_meal = 0;
-	philos->thread_continue = 1;
 }

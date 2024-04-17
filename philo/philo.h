@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/17 14:41:01 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/17 16:11:00 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct s_time
 {
 	struct timeval	start;
 	struct timeval	end;
+	pthread_mutex_t	time_mutex;
 	u_int64_t		timestamp_ms;
 }	t_time;
 
@@ -60,13 +61,13 @@ typedef struct s_philos_data
 	t_philo			*philos;
 	t_args			*args;
 	t_time			time;
+	int				they_ate;
 	pthread_mutex_t	death_mutex;
 }	t_philos_data;
 
 struct s_philo
 {
 	int				philo_num;
-	int				thread_continue;
 	int				fork_flag;
 	u_int64_t		meal_counter;
 	u_int64_t		last_meal;
@@ -74,7 +75,6 @@ struct s_philo
 	pthread_t		time_monitor;
 	pthread_mutex_t	data_mutex;
 	pthread_mutex_t	fork_mutex;
-	pthread_mutex_t	time_mutex;
 	t_philos_data	*data;
 };
 
