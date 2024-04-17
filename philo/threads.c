@@ -6,40 +6,27 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:12:54 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/15 19:05:15 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/17 14:11:22 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./philo.h"
 
-void	*check_death_routine(void *var)
+void	check_death(t_philo *philo)
 {
-	t_philos_data	*philosophers;
-	t_philo			*philo;
-	int				dead_thread;
-
-	philosophers = var;
-	while (1)
+	pthread_mutex_lock(&philo->data->death_mutex);
+	if (philo->data->dead_thread_id == -1)
 	{
-		pthread_mutex_lock(&philosophers->death_mutex);
-		if (philosophers->dead_thread_id >= 0)
-		{
-			dead_thread = philosophers->dead_thread_id;
-			pthread_mutex_unlock(&philosophers->death_mutex);
-			break ;
-		}
-		pthread_mutex_unlock(&philosophers->death_mutex);
-	}
-	if (dead_thread >= 0 && dead_thread <= 200)
-	{
-		philo = &philosophers->philos[dead_thread];
+		philo->data->dead_thread_id = philo->philo_num;
+		pthread_mutex_unlock(&philo->data->death_mutex);
 		pthread_mutex_lock(&philo->time_mutex);
 		get_timestamp(philo);
-		printf("\033[0;31m%lu %d died\n\033[0m",
-			philo->data->time.timestamp_ms, dead_thread);
+		printf("\033[0;31mTIMESTAMP[%luMS] PHILOSOPHER[%d] DIED\n\033[0m",
+			philo->data->time.timestamp_ms, philo->philo_num);
 		pthread_mutex_unlock(&philo->time_mutex);
 	}
-	return (NULL);
+	else
+		pthread_mutex_unlock(&philo->data->death_mutex);
 }
 
 void	*time_routine(void *var)
@@ -49,7 +36,7 @@ void	*time_routine(void *var)
 
 	philo = var;
 	value = survival_conditions(philo);
-	while (value == 0)
+	while (!value)
 		value = survival_conditions(philo);
 	pthread_mutex_lock(&philo->data_mutex);
 	philo->thread_continue = 0;
@@ -61,12 +48,9 @@ void	*time_routine(void *var)
 			philo->data->dead_thread_id = 999;
 		pthread_mutex_unlock(&philo->data->death_mutex);
 	}
-	else if (value == 2)
+	if (value == 2)
 	{
-		pthread_mutex_lock(&philo->data->death_mutex);
-		if (philo->data->dead_thread_id == -1)
-			philo->data->dead_thread_id = philo->philo_num;
-		pthread_mutex_unlock(&philo->data->death_mutex);
+		check_death(philo);
 	}
 	return (NULL);
 }
@@ -76,13 +60,9 @@ void	*routine(void *var)
 	t_philo	*philo;
 
 	philo = var;
-	if (pthread_create(&philo->time_monitor, NULL, &time_routine, var))
-		return (printf("%s\n", ERR_PTHREAD), (void *)1);
 	while (1)
 	{
-		if (!check_thread_continue(philo) || !philo_eat(philo))
-			break ;
-		else
+		if (check_thread_continue(philo) && philo_eat(philo))
 		{
 			pthread_mutex_lock(&philo->data->death_mutex);
 			if (philo->data->dead_thread_id >= 0)
@@ -93,10 +73,10 @@ void	*routine(void *var)
 			pthread_mutex_unlock(&philo->data->death_mutex);
 			philo_think(philo);
 		}
+		else
+			break ;
 	}
-	if (pthread_join(philo->time_monitor, NULL) != 0)
-		return (printf("%s\n", ERR_THREAD_DESTROY), (void *)1); 
-	return (NULL);
+	return ((void *)0);
 }
 
 int	start_pthreads(t_philo *philos, t_args *args, t_philos_data *philosophers)
@@ -106,9 +86,6 @@ int	start_pthreads(t_philo *philos, t_args *args, t_philos_data *philosophers)
 
 	count = -1;
 	gettimeofday(&start, 0);
-	if (pthread_create(&philosophers->death_thread, NULL, &check_death_routine,
-			(void *)philosophers) != 0)
-		return (printf("%s\n", ERR_PTHREAD), free(philos), free(args), 1);
 	if (init_mutex(philos, args->num_of_philo))
 		return (printf("%s\n", ERR_MUTEX_INIT), 1);
 	while (++count < args->num_of_philo)
@@ -119,7 +96,9 @@ int	start_pthreads(t_philo *philos, t_args *args, t_philos_data *philosophers)
 	while (++count < args->num_of_philo)
 	{
 		if (philos[count].philo_num == -1 || pthread_create(&philos[count].\
-			thread, NULL, &routine, (void *)&philos[count]))
+			thread, NULL, &routine, (void *)&philos[count]) || pthread_create(
+				&philos[count].time_monitor, NULL, &time_routine,
+				(void *)&philos[count]))
 			return (printf("%s\n", ERR_PTHREAD), free(philos), free(args), 1);
 	}
 	return (0);

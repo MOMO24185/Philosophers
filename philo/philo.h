@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/15 19:00:12 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/17 14:41:01 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ typedef struct s_philos_data
 	t_philo			*philos;
 	t_args			*args;
 	t_time			time;
-	pthread_t		death_thread;
 	pthread_mutex_t	death_mutex;
 }	t_philos_data;
 
@@ -92,6 +91,12 @@ unsigned long	get_time_in_ms(struct timeval start, struct timeval end);
 //Thread routine
 void			*routine(void *var);
 
+//Thread monitor routine that checks survival conditions
+void			*time_routine(void *var);
+
+//Checks for death and prints message status if philo died
+void			check_death(t_philo *philo);
+
 //Sets up each philosopher with its respective values and pointers needed to
 //function
 void			create_philo(t_philo *philos, int num, t_philos_data \
@@ -111,7 +116,7 @@ int				start_pthreads(t_philo *philos, t_args *args, t_philos_data \
 int				philo_eat(t_philo *philo);
 
 //Sleeps for time_to_sleep amount of time
-int			philo_sleep(t_philo *philo);
+int				philo_sleep(t_philo *philo);
 
 //Only prints current philo state as thinking
 void			philo_think(t_philo *philo);
@@ -119,15 +124,16 @@ void			philo_think(t_philo *philo);
 //Sets the given philo timestamp to the current time
 void			get_timestamp(t_philo *philo);
 
-//Sets the given philo last_meal timestamp to the current time
-void			get_last_meal_time(t_philo *philo);
-
-//Custom usleep that is more accurate and precise
-void			nap(u_int64_t utime, t_philo philo);
-
 //Checks the conditions needed by a philo to survive and eat again, or die
 int				survival_conditions(t_philo *philo);
 
-//Checks given philo for their continue value to see if they should be dead or alive
+//Checks given philo for their continue value to see if they should be dead or
+//alive
 int				check_thread_continue(t_philo *philo);
+
+//Unlocks forks for given philo and philo[next]
+void			unlock_forks(t_philo *philo, int next);
+
+//Checks if forks within philo and phil[next] are free and reserves them
+int				check_forks(t_philo *philo, int next);
 #endif
