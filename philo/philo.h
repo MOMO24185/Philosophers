@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/18 17:19:33 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/18 18:20:42 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,8 +135,8 @@ int				check_thread_continue(t_philo *philo);
 //Unlocks forks for given philo and philo[next]
 void			unlock_forks(t_philo *philo, int next);
 
-//Checks if forks within philo and phil[next] are free and reserves them
-int				check_forks(t_philo *philo, int next);
+//Checks if fork within given philo is free and reserves it
+int				check_forks(t_philo *philo, int reserved);
 
 //Sets up memory alloc and default values for t_philo_datat
 int				set_philo_data(t_philos_data *philosophers, t_args *args, \
@@ -145,5 +145,6 @@ int				set_philo_data(t_philos_data *philosophers, t_args *args, \
 //Prints status messages
 int				print_status(t_philo *philo, char *msg, int is_eating);
 
+//Custom usleep for better accuracy and no delays
 void			ft_usleep(t_philo *philo, uint64_t sleep_time, uint64_t timestamp);
 #endif

@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:50:53 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/18 17:22:47 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/18 18:21:29 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ int	philo_eat(t_philo *philo)
 	next = philo->philo_num + 1;
 	if (next == philo->data->args->num_of_philo)
 		next = 0;
-	if (check_forks(philo, next) == 2)
+	if (check_forks(philo, philo->philo_num)
+		&& check_forks(&philo->data->philos[next], next))
 		return (eat(philo, next));
 	return (0);
 }
@@ -63,7 +64,6 @@ int	philo_think(t_philo *philo)
 
 int	print_status(t_philo *philo, char *msg, int is_eating)
 {
-
 	pthread_mutex_lock(&philo->data->time.time_mutex);
 	get_timestamp(philo);
 	if (!philo->data->time.stop_printing
