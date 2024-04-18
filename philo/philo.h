@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/17 16:11:00 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/18 14:36:06 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct s_time
 {
 	struct timeval	start;
 	struct timeval	end;
+	int				stop_printing;
 	pthread_mutex_t	time_mutex;
 	u_int64_t		timestamp_ms;
 }	t_time;
@@ -119,7 +120,7 @@ int				philo_eat(t_philo *philo);
 int				philo_sleep(t_philo *philo);
 
 //Only prints current philo state as thinking
-void			philo_think(t_philo *philo);
+int				philo_think(t_philo *philo);
 
 //Sets the given philo timestamp to the current time
 void			get_timestamp(t_philo *philo);
@@ -136,4 +137,11 @@ void			unlock_forks(t_philo *philo, int next);
 
 //Checks if forks within philo and phil[next] are free and reserves them
 int				check_forks(t_philo *philo, int next);
+
+//Sets up memory alloc and default values for t_philo_datat
+int				set_philo_data(t_philos_data *philosophers, t_args *args, \
+				t_philo *philos);
+
+//Prints status messages
+int				print_status(t_philo *philo, char *msg, int is_eating);
 #endif

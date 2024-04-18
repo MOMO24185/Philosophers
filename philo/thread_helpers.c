@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:30 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/17 16:14:59 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/18 15:07:59 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,24 +24,28 @@ void	unlock_forks(t_philo *philo, int next)
 
 int	check_forks(t_philo *philo, int next)
 {
-	int	ready_to_eat;
 	int	reserved;
+	int	ready_to_eat;
 
 	ready_to_eat = 0;
 	pthread_mutex_lock(&philo->fork_mutex);
 	reserved = philo->philo_num;
 	if (philo->fork_flag == -1 || philo->fork_flag == reserved)
 	{
-		ready_to_eat++;
+		if (philo->fork_flag != reserved)
+			print_status(philo, "\033[1;36mHAS TAKEN A FORK\033[0m", 0);
 		philo->fork_flag = reserved;
+		ready_to_eat++;
 	}
 	pthread_mutex_unlock(&philo->fork_mutex);
 	pthread_mutex_lock(&philo->data->philos[next].fork_mutex);
 	if (philo->data->philos[next].fork_flag == -1
 		|| philo->data->philos[next].fork_flag == reserved)
 	{
-		ready_to_eat++;
+		if (philo->data->philos[next].fork_flag != reserved)
+			print_status(philo, "\033[1;36mHAS TAKEN A FORK\033[0m", 0);
 		philo->data->philos[next].fork_flag = reserved;
+		ready_to_eat++;
 	}
 	pthread_mutex_unlock(&philo->data->philos[next].fork_mutex);
 	return (ready_to_eat);
@@ -62,4 +66,13 @@ unsigned long	get_time_in_ms(struct timeval start, struct timeval end)
 {
 	return (((end.tv_sec * 1000) + end.tv_usec / 1000) - ((
 				start.tv_sec * 1000) + start.tv_usec / 1000));
+}
+
+int	check_thread_continue(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->data->death_mutex);
+	if (philo->data->they_ate == philo->data->args->num_of_philo)
+		return (pthread_mutex_unlock(&philo->data->death_mutex), 0);
+	pthread_mutex_unlock(&philo->data->death_mutex);
+	return (1);
 }

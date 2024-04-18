@@ -6,19 +6,24 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:05 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/17 16:21:35 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/18 12:55:01 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./philo.h"
 
-int	check_thread_continue(t_philo *philo)
+int	set_philo_data(t_philos_data *philosophers, t_args *args, t_philo *philos)
 {
-	pthread_mutex_lock(&philo->data->death_mutex);
-	if (philo->data->they_ate == philo->data->args->num_of_philo)
-		return (pthread_mutex_unlock(&philo->data->death_mutex), 0);
-	pthread_mutex_unlock(&philo->data->death_mutex);
-	return (1);
+	philosophers->dead_thread_id = -1;
+	philosophers->they_ate = 0;
+	philosophers->time.stop_printing = 0;
+	philosophers->args = args;
+	philosophers->philos = philos;
+	if (pthread_mutex_init(&philosophers->time.time_mutex, NULL) != 0)
+		return (free(philosophers), free(args), free(philos), 1);
+	if (pthread_mutex_init(&philosophers->death_mutex, NULL) != 0)
+		return (free(philosophers), free(args), free(philos), 1);
+	return (0);
 }
 
 int	destroy_threads(t_philo *philos, int num_of_philo)
@@ -66,6 +71,8 @@ t_args	*set_args(int argc, char **argv)
 
 	count = 0;
 	args = malloc(sizeof(t_args));
+	if (!args)
+		return (args);
 	args->num_of_philo = ft_atoi(argv[1]).value;
 	args->time_to_die = ft_atoi(argv[2]).value * 1000;
 	args->time_to_eat = ft_atoi(argv[3]).value * 1000;

@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:12:54 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/17 16:14:38 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/18 14:40:03 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,9 @@ void	check_death(t_philo *philo)
 		philo->data->dead_thread_id = philo->philo_num;
 		pthread_mutex_unlock(&philo->data->death_mutex);
 		pthread_mutex_lock(&philo->data->time.time_mutex);
+		philo->data->time.stop_printing = 1;
 		get_timestamp(philo);
-		printf("\033[0;31mTIMESTAMP[%lu]ms PHILOSOPHER[%d] DIED\n\033[0m",
+		printf("TIMESTAMP[%llu]ms THREAD[%d] \033[1;31mIS DEAD\n\033[0m",
 			philo->data->time.timestamp_ms, philo->philo_num);
 		pthread_mutex_unlock(&philo->data->time.time_mutex);
 	}
@@ -46,7 +47,7 @@ void	*time_routine(void *var)
 	}
 	if (value == 2)
 		check_death(philo);
-	return (NULL);
+	return ((void *)0);
 }
 
 void	*routine(void *var)
@@ -58,17 +59,10 @@ void	*routine(void *var)
 		usleep(philo->data->args->time_to_eat);
 	while (1)
 	{
-		if (check_thread_continue(philo) && philo_eat(philo)
-			&& check_thread_continue(philo))
+		if (check_thread_continue(philo) && philo_eat(philo))
 		{
-			pthread_mutex_lock(&philo->data->death_mutex);
-			if (philo->data->dead_thread_id >= 0)
-			{
-				pthread_mutex_unlock(&philo->data->death_mutex);
+			if (!philo_think(philo))
 				break ;
-			}
-			pthread_mutex_unlock(&philo->data->death_mutex);
-			philo_think(philo);
 		}
 		else
 			break ;
@@ -82,14 +76,14 @@ int	start_pthreads(t_philo *philos, t_args *args, t_philos_data *philosophers)
 	struct timeval	start;
 
 	count = -1;
-	gettimeofday(&start, 0);
 	if (init_mutex(philos, args->num_of_philo))
 		return (printf("%s\n", ERR_MUTEX_INIT), 1);
 	while (++count < args->num_of_philo)
 		create_philo(&philos[count], count, philosophers);
 	count = -1;
-	philosophers->time.start = start;
 	philosophers->time.timestamp_ms = 0;
+	gettimeofday(&start, 0);
+	philosophers->time.start = start;
 	while (++count < args->num_of_philo)
 	{
 		if (philos[count].philo_num == -1 || pthread_create(&philos[count].\
