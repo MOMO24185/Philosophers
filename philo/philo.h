@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/18 18:20:42 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/18 18:28:26 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ struct s_philo
 	t_philos_data	*data;
 };
 
-//Same as standard atoi, except some minor changes to parsing forbidden
+//Same as standard atoi, except some minor changes to parsing
 //characters specifically tailored to this program.
 t_int			ft_atoi(const char *str);
 
@@ -92,7 +92,7 @@ unsigned long	get_time_in_ms(struct timeval start, struct timeval end);
 //Thread routine
 void			*routine(void *var);
 
-//Thread monitor routine that checks survival conditions
+//Thread routine that constantly checks survival conditions
 void			*time_routine(void *var);
 
 //Checks for death and prints message status if philo died
@@ -100,18 +100,18 @@ void			check_death(t_philo *philo);
 
 //Sets up each philosopher with its respective values and pointers needed to
 //function
-void			create_philo(t_philo *philos, int num, t_philos_data \
-					*philosophers);
+void			create_philo(t_philo *philos, int num,
+					t_philos_data *philosophers);
 
 //Sets up the programs arguments needed for the threads
 t_args			*set_args(int argc, char **argv);
 
-//Ends all threads and destroys their mutex's
+//waits for all threads to die and destroys their mutex's
 int				destroy_threads(t_philo *philos, int num_of_philo);
 
 //Begins the process of creating pthreads
-int				start_pthreads(t_philo *philos, t_args *args, t_philos_data \
-					*philosophers);
+int				start_pthreads(t_philo *philos, t_args *args,
+					t_philos_data *philosophers);
 
 //Manages forks for a philosopher attempting to eat
 int				philo_eat(t_philo *philo);
@@ -119,7 +119,7 @@ int				philo_eat(t_philo *philo);
 //Sleeps for time_to_sleep amount of time
 int				philo_sleep(t_philo *philo);
 
-//Only prints current philo state as thinking
+//Prints out thinking philo state
 int				philo_think(t_philo *philo);
 
 //Sets the given philo timestamp to the current time
@@ -128,8 +128,7 @@ void			get_timestamp(t_philo *philo);
 //Checks the conditions needed by a philo to survive and eat again, or die
 int				survival_conditions(t_philo *philo);
 
-//Checks given philo for their continue value to see if they should be dead or
-//alive
+//Checks if all philosophers have satified the number of times to eat value
 int				check_thread_continue(t_philo *philo);
 
 //Unlocks forks for given philo and philo[next]
@@ -138,13 +137,15 @@ void			unlock_forks(t_philo *philo, int next);
 //Checks if fork within given philo is free and reserves it
 int				check_forks(t_philo *philo, int reserved);
 
-//Sets up memory alloc and default values for t_philo_datat
-int				set_philo_data(t_philos_data *philosophers, t_args *args, \
-				t_philo *philos);
+//Sets up memory alloc and default values for t_philo_data
+int				set_philo_data(t_philos_data *philosophers, t_args *args,
+					t_philo *philos);
 
-//Prints status messages
+//Prints status messages based on given philo and given message
+//is_eating value sets the timestamp of the status to the last_meal value
 int				print_status(t_philo *philo, char *msg, int is_eating);
 
 //Custom usleep for better accuracy and no delays
-void			ft_usleep(t_philo *philo, uint64_t sleep_time, uint64_t timestamp);
+void			ft_usleep(t_philo *philo, uint64_t sleep_time,
+					uint64_t timestamp);
 #endif
