@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:12:54 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/18 14:40:03 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/18 15:17:17 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,10 @@ void	check_death(t_philo *philo)
 		pthread_mutex_lock(&philo->data->time.time_mutex);
 		philo->data->time.stop_printing = 1;
 		get_timestamp(philo);
-		printf("TIMESTAMP[%llu]ms THREAD[%d] \033[1;31mIS DEAD\n\033[0m",
-			philo->data->time.timestamp_ms, philo->philo_num);
+		printf("TIMESTAMP[\033[1;37m%llu\033[0m]ms ",
+			philo->data->time.timestamp_ms);
+		printf("THREAD[\033[1;37m%d\033[0m] ", philo->philo_num);
+		printf("\033[1;31mIS DEAD\n\033[0m");
 		pthread_mutex_unlock(&philo->data->time.time_mutex);
 	}
 	else
