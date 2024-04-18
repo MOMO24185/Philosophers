@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/18 14:36:06 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/18 17:19:33 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,4 +144,6 @@ int				set_philo_data(t_philos_data *philosophers, t_args *args, \
 
 //Prints status messages
 int				print_status(t_philo *philo, char *msg, int is_eating);
+
+void			ft_usleep(t_philo *philo, uint64_t sleep_time, uint64_t timestamp);
 #endif

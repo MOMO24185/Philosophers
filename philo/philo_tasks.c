@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:50:53 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/18 15:41:46 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/18 17:22:47 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,17 @@
 
 static int	eat(t_philo *philo, int next)
 {
+	uint64_t	timestamp;
+
 	if (!print_status(philo, "\033[1;32mIS EATING\033[0m", 1))
 		return (0);
+	pthread_mutex_lock(&philo->data->time.time_mutex);
+	timestamp = philo->data->time.timestamp_ms;
+	pthread_mutex_unlock(&philo->data->time.time_mutex);
 	pthread_mutex_lock(&philo->data_mutex);
 	philo->meal_counter++;
 	pthread_mutex_unlock(&philo->data_mutex);
-	usleep(philo->data->args->time_to_eat);
+	ft_usleep(philo, philo->data->args->time_to_eat, timestamp);
 	unlock_forks(philo, next);
 	return (philo_sleep(philo));
 }
@@ -31,23 +36,21 @@ int	philo_eat(t_philo *philo)
 	next = philo->philo_num + 1;
 	if (next == philo->data->args->num_of_philo)
 		next = 0;
-	while (1)
-	{
-		pthread_mutex_lock(&philo->data->death_mutex);
-		if (philo->data->dead_thread_id >= 0)
-			return (pthread_mutex_unlock(&philo->data->death_mutex), 0);
-		pthread_mutex_unlock(&philo->data->death_mutex);
-		if (check_forks(philo, next) == 2)
-			return (eat(philo, next));
-	}
-	return (1);
+	if (check_forks(philo, next) == 2)
+		return (eat(philo, next));
+	return (0);
 }
 
 int	philo_sleep(t_philo *philo)
 {
+	uint64_t	timestamp;
+
 	if (!print_status(philo, "\033[1;33mIS SLEEPING\033[0m", 0))
 		return (0);
-	usleep(philo->data->args->time_to_sleep);
+	pthread_mutex_lock(&philo->data->time.time_mutex);
+	timestamp = philo->data->time.timestamp_ms;
+	pthread_mutex_unlock(&philo->data->time.time_mutex);
+	ft_usleep(philo, philo->data->args->time_to_sleep, timestamp);
 	return (1);
 }
 
@@ -60,6 +63,7 @@ int	philo_think(t_philo *philo)
 
 int	print_status(t_philo *philo, char *msg, int is_eating)
 {
+
 	pthread_mutex_lock(&philo->data->time.time_mutex);
 	get_timestamp(philo);
 	if (!philo->data->time.stop_printing

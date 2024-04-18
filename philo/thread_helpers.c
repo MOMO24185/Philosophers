@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:30 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/18 15:07:59 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/18 17:20:07 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,26 +28,54 @@ int	check_forks(t_philo *philo, int next)
 	int	ready_to_eat;
 
 	ready_to_eat = 0;
-	pthread_mutex_lock(&philo->fork_mutex);
 	reserved = philo->philo_num;
-	if (philo->fork_flag == -1 || philo->fork_flag == reserved)
+	while (1)
 	{
-		if (philo->fork_flag != reserved)
-			print_status(philo, "\033[1;36mHAS TAKEN A FORK\033[0m", 0);
-		philo->fork_flag = reserved;
-		ready_to_eat++;
+		// printf("Looking for left fork\n");
+		pthread_mutex_lock(&philo->fork_mutex);
+		if (philo->fork_flag == -1 || philo->fork_flag == reserved)
+		{
+			if (philo->fork_flag != reserved)
+			{
+				philo->fork_flag = reserved;
+				pthread_mutex_unlock(&philo->fork_mutex);
+				print_status(philo, "\033[1;36mHAS TAKEN A FORK\033[0m", 0);
+			}
+			else
+				pthread_mutex_unlock(&philo->fork_mutex);
+			ready_to_eat++;
+			break ;
+		}
+		else
+			pthread_mutex_unlock(&philo->fork_mutex);
+		pthread_mutex_lock(&philo->data->death_mutex);
+		if (philo->data->dead_thread_id >= 0)
+			return (pthread_mutex_unlock(&philo->data->death_mutex), 0);
+		pthread_mutex_unlock(&philo->data->death_mutex);
 	}
-	pthread_mutex_unlock(&philo->fork_mutex);
-	pthread_mutex_lock(&philo->data->philos[next].fork_mutex);
-	if (philo->data->philos[next].fork_flag == -1
-		|| philo->data->philos[next].fork_flag == reserved)
+
+	while (1)
 	{
-		if (philo->data->philos[next].fork_flag != reserved)
-			print_status(philo, "\033[1;36mHAS TAKEN A FORK\033[0m", 0);
-		philo->data->philos[next].fork_flag = reserved;
-		ready_to_eat++;
+		// printf("Looking for right fork\n");
+		pthread_mutex_lock(&philo->data->philos[next].fork_mutex);
+		if (philo->data->philos[next].fork_flag == -1
+			|| philo->data->philos[next].fork_flag == reserved)
+		{
+			if (philo->data->philos[next].fork_flag != reserved)
+			{
+				philo->data->philos[next].fork_flag = reserved;
+				pthread_mutex_unlock(&philo->data->philos[next].fork_mutex);
+				print_status(philo, "\033[1;36mHAS TAKEN A FORK\033[0m", 0);
+			}
+			ready_to_eat++;
+			break ;
+		}
+		pthread_mutex_unlock(&philo->data->philos[next].fork_mutex);
+		pthread_mutex_lock(&philo->data->death_mutex);
+		if (philo->data->dead_thread_id >= 0)
+			return (pthread_mutex_unlock(&philo->data->death_mutex), 0);
+		pthread_mutex_unlock(&philo->data->death_mutex);
 	}
-	pthread_mutex_unlock(&philo->data->philos[next].fork_mutex);
 	return (ready_to_eat);
 }
 

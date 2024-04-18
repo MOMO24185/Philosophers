@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:12:54 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/18 15:17:17 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/04/18 17:11:44 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,9 @@ void	*routine(void *var)
 	philo = var;
 	if (philo->philo_num % 2 == 0)
 		usleep(philo->data->args->time_to_eat);
-	while (1)
+	while (check_thread_continue(philo))
 	{
-		if (check_thread_continue(philo) && philo_eat(philo))
+		if (philo_eat(philo))
 		{
 			if (!philo_think(philo))
 				break ;
@@ -83,7 +83,6 @@ int	start_pthreads(t_philo *philos, t_args *args, t_philos_data *philosophers)
 	while (++count < args->num_of_philo)
 		create_philo(&philos[count], count, philosophers);
 	count = -1;
-	philosophers->time.timestamp_ms = 0;
 	gettimeofday(&start, 0);
 	philosophers->time.start = start;
 	while (++count < args->num_of_philo)
