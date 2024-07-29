@@ -6,17 +6,11 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 09:39:25 by melshafi          #+#    #+#             */
-/*   Updated: 2024/07/29 13:31:13 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/07/29 15:26:04 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./philo.h"
-
-/*
-Debug in valgrind using these flags for tracking threads and mutex states
-valgrind --tool=helgrind --history-level=full --track-lockorders=yes
---free-is-write=yes
-*/
 
 /*
 Takes in these arguments:

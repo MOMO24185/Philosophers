@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:12:54 by melshafi          #+#    #+#             */
-/*   Updated: 2024/07/29 11:27:50 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/07/29 15:32:06 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	*routine(void *var)
 	philo = var;
 	if (philo->philo_num % 2 == 1)
 		usleep(philo->data->args->time_to_eat);
-	while (check_thread_continue(philo))
+	while (philo->meal_counter != philo->data->args->num_to_eat)
 	{
 		if (philo_eat(philo))
 		{

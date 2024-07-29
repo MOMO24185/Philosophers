@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:50:53 by melshafi          #+#    #+#             */
-/*   Updated: 2024/07/29 13:19:00 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/07/29 15:32:45 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ static int	eat(t_philo *philo, int next)
 
 	if (!print_status(philo, "\033[1;32mIS EATING\033[0m", 1))
 		return (0);
+	pthread_mutex_lock(&philo->data_mutex);
+	philo->meal_counter++;
+	pthread_mutex_unlock(&philo->data_mutex);
 	pthread_mutex_lock(&philo->data->time.time_mutex);
 	timestamp = philo->data->time.timestamp_ms;
 	pthread_mutex_unlock(&philo->data->time.time_mutex);
 	ft_usleep(philo, philo->data->args->time_to_eat, timestamp);
 	unlock_forks(philo, next);
-	pthread_mutex_lock(&philo->data_mutex);
-	philo->meal_counter++;
-	pthread_mutex_unlock(&philo->data_mutex);
 	return (philo_sleep(philo));
 }
 
