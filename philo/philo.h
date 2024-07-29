@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/07/29 15:19:59 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/07/29 15:52:11 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,6 @@ t_int			ft_atoi(const char *str);
 //Initializes mutex's within all philos
 int				init_mutex(t_philo *philos, int num_of_philo);
 
-//Calculates time between 2 intervals in milliseconds
-unsigned long	get_time_in_ms(struct timeval start, struct timeval end);
-
 //Thread routine
 void			*routine(void *var);
 
@@ -127,6 +124,10 @@ void			get_timestamp(t_philo *philo);
 
 //Checks the conditions needed by a philo to survive and eat again, or die
 int				survival_conditions(t_philo *philo);
+
+//Checks if all philos satisfy the num of times to eat including a
+//self check on meal counter
+int				check_thread_survival(t_philo *philo);
 
 //Checks if all philosophers have satified the number of times to eat value
 int				check_thread_continue(t_philo *philo);

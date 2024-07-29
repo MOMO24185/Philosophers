@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:30 by melshafi          #+#    #+#             */
-/*   Updated: 2024/07/29 15:31:42 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/07/29 15:53:22 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,10 @@ void	get_timestamp(t_philo *philo)
 		printf("%s\n", ERR_TIME);
 		return ;
 	}
-	philo->data->time.timestamp_ms = get_time_in_ms(philo->data->time.start,
-			philo->data->time.end);
-}
-
-unsigned long	get_time_in_ms(struct timeval start, struct timeval end)
-{
-	return (((end.tv_sec * 1000) + end.tv_usec / 1000) - ((
-				start.tv_sec * 1000) + start.tv_usec / 1000));
+	philo->data->time.timestamp_ms = ((philo->data->time.end.tv_sec * 1000)
+			+ philo->data->time.end.tv_usec / 1000) - ((
+				philo->data->time.start.tv_sec * 1000)
+			+ philo->data->time.start.tv_usec / 1000);
 }
 
 int	check_thread_continue(t_philo *philo)
