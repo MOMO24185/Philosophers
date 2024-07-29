@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/18 18:28:26 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/07/29 11:23:02 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ int				check_thread_continue(t_philo *philo);
 void			unlock_forks(t_philo *philo, int next);
 
 //Checks if fork within given philo is free and reserves it
-int				check_forks(t_philo *philo, int reserved);
+int				check_forks(t_philo *og_philo, t_philo *philo, int reserved);
 
 //Sets up memory alloc and default values for t_philo_data
 int				set_philo_data(t_philos_data *philosophers, t_args *args,

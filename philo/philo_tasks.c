@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:50:53 by melshafi          #+#    #+#             */
-/*   Updated: 2024/04/18 18:21:29 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/07/29 13:19:00 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ static int	eat(t_philo *philo, int next)
 	pthread_mutex_lock(&philo->data->time.time_mutex);
 	timestamp = philo->data->time.timestamp_ms;
 	pthread_mutex_unlock(&philo->data->time.time_mutex);
+	ft_usleep(philo, philo->data->args->time_to_eat, timestamp);
+	unlock_forks(philo, next);
 	pthread_mutex_lock(&philo->data_mutex);
 	philo->meal_counter++;
 	pthread_mutex_unlock(&philo->data_mutex);
-	ft_usleep(philo, philo->data->args->time_to_eat, timestamp);
-	unlock_forks(philo, next);
 	return (philo_sleep(philo));
 }
 
@@ -36,8 +36,11 @@ int	philo_eat(t_philo *philo)
 	next = philo->philo_num + 1;
 	if (next == philo->data->args->num_of_philo)
 		next = 0;
-	if (check_forks(philo, philo->philo_num)
-		&& check_forks(&philo->data->philos[next], next))
+	if (philo->philo_num + 1 == philo->data->args->num_of_philo
+		&& philo->philo_num + 1 == 1)
+		next = -1;
+	if (check_forks(philo, philo, philo->philo_num) && next != -1
+		&& check_forks(philo, &philo->data->philos[next], philo->philo_num))
 		return (eat(philo, next));
 	return (0);
 }
