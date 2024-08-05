@@ -22,7 +22,7 @@ void	check_death(t_philo *philo)
 		pthread_mutex_lock(&philo->data->time.time_mutex);
 		philo->data->time.stop_printing = 1;
 		get_timestamp(philo);
-		printf("TIMESTAMP[\033[1;37m%llu\033[0m]ms ",
+		printf("TIMESTAMP[\033[1;37m%lu\033[0m]ms ",
 			philo->data->time.timestamp_ms);
 		printf("THREAD[\033[1;37m%d\033[0m] ", philo->philo_num);
 		printf("\033[1;31mIS DEAD\n\033[0m");
