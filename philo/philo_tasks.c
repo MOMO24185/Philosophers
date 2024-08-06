@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:50:53 by melshafi          #+#    #+#             */
-/*   Updated: 2024/07/29 15:32:45 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/08/06 11:43:53 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	print_status(t_philo *philo, char *msg, int is_eating)
 	if (!philo->data->time.stop_printing
 		&& check_thread_continue(philo))
 	{
-		printf("TIMESTAMP[\033[1;37m%lu\033[0m]ms",
+		printf("TIMESTAMP[\033[1;37m%llu\033[0m]ms",
 			philo->data->time.timestamp_ms);
 		printf(" THREAD[\033[1;37m%d\033[0m] ", philo->philo_num);
 		printf("%s\n\033[0m", msg);
