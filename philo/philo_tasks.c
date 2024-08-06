@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:50:53 by melshafi          #+#    #+#             */
-/*   Updated: 2024/08/06 14:59:14 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/08/06 16:48:23 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ static int	eat(t_philo *philo, int next)
 	pthread_mutex_lock(&philo->data_mutex);
 	philo->meal_counter++;
 	pthread_mutex_unlock(&philo->data_mutex);
-	ft_usleep(philo, philo->data->args->time_to_eat);
+	if (!ft_usleep(philo, philo->data->args->time_to_eat))
+		return (check_death(philo), 0);
 	unlock_forks(philo, next);
 	return (philo_sleep(philo));
 }
@@ -34,17 +35,18 @@ int	philo_eat(t_philo *philo)
 	if (philo->philo_num + 1 == philo->data->args->num_of_philo
 		&& philo->philo_num + 1 == 1)
 		next = -1;
-	if (check_forks(philo, philo, philo->philo_num) && next != -1
+	if (next != -1 && check_forks(philo, philo, philo->philo_num)
 		&& check_forks(philo, &philo->data->philos[next], philo->philo_num))
 		return (eat(philo, next));
-	return (0);
+	return (check_death(philo), 0);
 }
 
 int	philo_sleep(t_philo *philo)
 {
 	if (!print_status(philo, "\033[1;33mIS SLEEPING\033[0m", 0))
 		return (0);
-	ft_usleep(philo, philo->data->args->time_to_sleep);
+	if (!ft_usleep(philo, philo->data->args->time_to_sleep))
+		return (check_death(philo), 0);
 	return (1);
 }
 

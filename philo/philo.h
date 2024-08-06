@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/08/06 14:18:17 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/08/06 16:44:40 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdint.h>
-# include <stdio.h>
 # include <limits.h>
 # include <string.h>
+# include <stdio.h>
 
 # define ERR_USAGE "Usage: ./philo [Number of Philosophers] [Time to die]\
  [Time to eat] [Time to sleep] optional:[Number of times each Philosopher\
@@ -146,5 +146,5 @@ int				set_philo_data(t_philos_data *philosophers, t_args *args,
 int				print_status(t_philo *philo, char *msg, int is_eating);
 
 //Custom usleep for better accuracy and no delays
-void			ft_usleep(t_philo *philo, uint64_t sleep_time);
+int				ft_usleep(t_philo *philo, uint64_t sleep_time);
 #endif

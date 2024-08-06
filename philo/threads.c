@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:12:54 by melshafi          #+#    #+#             */
-/*   Updated: 2024/08/06 14:46:08 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/08/06 16:48:49 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,11 @@ void	*routine(void *var)
 
 	philo = var;
 	if (philo->philo_num % 2 == 1)
-		ft_usleep(philo, philo->data->args->time_to_eat);
-	while (check_thread_continue(philo))
+	{
+		if (!ft_usleep(philo, philo->data->args->time_to_eat))
+			return (check_death(philo), (void *)0);
+	}
+	while (!wellness_check(philo) && check_thread_continue(philo))
 	{
 		if (philo_eat(philo))
 		{
@@ -85,12 +88,12 @@ int	wellness_check(t_philo	*philo)
 		pthread_mutex_lock(&philo->data->death_mutex);
 		philo->data->they_ate++;
 		pthread_mutex_unlock(&philo->data->death_mutex);
-		return (1);
+		return (fprintf(stderr, "TESTING1\n"), 1);
 	}
 	else if (value == 2)
-		return (check_death(philo), 2);
+		return (fprintf(stderr, "TESTING2\n"), check_death(philo), 2);
 	else if (value == 3)
-		return (3);
+		return (fprintf(stderr, "TESTING3\n"), 3);
 	return (0);
 }
 
@@ -98,7 +101,6 @@ int	survival_conditions(t_philo *philo)
 {
 	long long	time;
 
-	time = get_timestamp() - philo->data->time.start;
 	pthread_mutex_lock(&philo->data->death_mutex);
 	if (philo->data->dead_thread_id >= 0)
 		return (pthread_mutex_unlock(&philo->data->death_mutex), 3);
@@ -108,6 +110,7 @@ int	survival_conditions(t_philo *philo)
 		&& philo->meal_counter >= philo->data->args->num_to_eat)
 		return (pthread_mutex_unlock(&philo->data_mutex), 1);
 	pthread_mutex_unlock(&philo->data_mutex);
+	time = get_timestamp() - philo->data->time.start;
 	pthread_mutex_lock(&philo->data->time.time_mutex);
 	if ((time - philo->last_meal
 			>= (philo->data->args->time_to_die / 1000)))

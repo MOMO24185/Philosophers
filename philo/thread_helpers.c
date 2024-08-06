@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:30 by melshafi          #+#    #+#             */
-/*   Updated: 2024/08/06 14:23:08 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/08/06 16:24:46 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,8 @@ int	check_forks(t_philo *og_philo, t_philo *philo, int reserved)
 		}
 		else
 			pthread_mutex_unlock(&philo->fork_mutex);
-		pthread_mutex_lock(&philo->data->death_mutex);
-		if (philo->data->dead_thread_id >= 0)
-			return (pthread_mutex_unlock(&philo->data->death_mutex), 0);
-		pthread_mutex_unlock(&philo->data->death_mutex);
+		if (!wellness_check(og_philo))
+			return (0);
 	}
 	return (1);
 }
