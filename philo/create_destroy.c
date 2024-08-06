@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:05 by melshafi          #+#    #+#             */
-/*   Updated: 2024/08/06 11:59:28 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/08/06 13:19:31 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@ int	destroy_threads(t_philo *philos, int num_of_philo)
 	while (count < num_of_philo)
 	{
 		if (pthread_join(philos[count].thread, NULL) != 0)
-			return (1);
-		if (pthread_join(philos[count].time_monitor, NULL) != 0)
 			return (1);
 		if (pthread_mutex_destroy(&philos[count].fork_mutex) != 0)
 			return (1);

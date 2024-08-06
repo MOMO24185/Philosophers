@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/07/29 15:52:11 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/08/06 14:18:17 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,7 @@ typedef struct s_int
 
 typedef struct s_time
 {
-	struct timeval	start;
-	struct timeval	end;
+	long long		start;
 	int				stop_printing;
 	pthread_mutex_t	time_mutex;
 	u_int64_t		timestamp_ms;
@@ -74,7 +73,6 @@ struct s_philo
 	u_int64_t		meal_counter;
 	u_int64_t		last_meal;
 	pthread_t		thread;
-	pthread_t		time_monitor;
 	pthread_mutex_t	data_mutex;
 	pthread_mutex_t	fork_mutex;
 	t_philos_data	*data;
@@ -90,8 +88,8 @@ int				init_mutex(t_philo *philos, int num_of_philo);
 //Thread routine
 void			*routine(void *var);
 
-//Thread routine that constantly checks survival conditions
-void			*time_routine(void *var);
+//Checks survival conditions and sets death accordingly
+int				wellness_check(t_philo	*philo);
 
 //Checks for death and prints message status if philo died
 void			check_death(t_philo *philo);
@@ -121,7 +119,7 @@ int				philo_sleep(t_philo *philo);
 int				philo_think(t_philo *philo);
 
 //Sets the given philo timestamp to the current time
-void			get_timestamp(t_philo *philo);
+long long		get_timestamp(void);
 
 //Checks the conditions needed by a philo to survive and eat again, or die
 int				survival_conditions(t_philo *philo);
@@ -148,6 +146,5 @@ int				set_philo_data(t_philos_data *philosophers, t_args *args,
 int				print_status(t_philo *philo, char *msg, int is_eating);
 
 //Custom usleep for better accuracy and no delays
-void			ft_usleep(t_philo *philo, uint64_t sleep_time,
-					uint64_t timestamp);
+void			ft_usleep(t_philo *philo, uint64_t sleep_time);
 #endif
