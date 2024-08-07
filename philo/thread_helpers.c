@@ -6,46 +6,11 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:30 by melshafi          #+#    #+#             */
-/*   Updated: 2024/08/06 16:24:46 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/08/07 13:00:44 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./philo.h"
-
-void	unlock_forks(t_philo *philo, int next)
-{
-	pthread_mutex_lock(&philo->fork_mutex);
-	philo->fork_flag = -1;
-	pthread_mutex_unlock(&philo->fork_mutex);
-	pthread_mutex_lock(&philo->data->philos[next].fork_mutex);
-	philo->data->philos[next].fork_flag = -1;
-	pthread_mutex_unlock(&philo->data->philos[next].fork_mutex);
-}
-
-int	check_forks(t_philo *og_philo, t_philo *philo, int reserved)
-{
-	while (1)
-	{
-		pthread_mutex_lock(&philo->fork_mutex);
-		if (philo->fork_flag == -1 || philo->fork_flag == reserved)
-		{
-			if (philo->fork_flag == -1)
-			{
-				philo->fork_flag = reserved;
-				pthread_mutex_unlock(&philo->fork_mutex);
-				print_status(og_philo, "\033[1;36mHAS TAKEN A FORK\033[0m", 0);
-			}
-			else
-				pthread_mutex_unlock(&philo->fork_mutex);
-			break ;
-		}
-		else
-			pthread_mutex_unlock(&philo->fork_mutex);
-		if (!wellness_check(og_philo))
-			return (0);
-	}
-	return (1);
-}
 
 long long	get_timestamp(void)
 {
@@ -61,9 +26,9 @@ long long	get_timestamp(void)
 
 int	check_thread_continue(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->data->death_mutex);
+	pthread_mutex_lock(&philo->data->eater);
 	if (philo->data->they_ate == philo->data->args->num_of_philo)
-		return (pthread_mutex_unlock(&philo->data->death_mutex), 0);
-	pthread_mutex_unlock(&philo->data->death_mutex);
+		return (pthread_mutex_unlock(&philo->data->eater), 0);
+	pthread_mutex_unlock(&philo->data->eater);
 	return (1);
 }

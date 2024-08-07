@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 09:39:25 by melshafi          #+#    #+#             */
-/*   Updated: 2024/08/06 13:20:51 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/08/07 14:54:26 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	main(int argc, char **argv)
 		return (1);
 	if (start_pthreads(philos, args, philosophers))
 		return (1);
-	if (destroy_threads(philos, args->num_of_philo))
+	if (destroy_threads(philosophers, args->num_of_philo))
 		return (printf("%s\n", ERR_THREAD_DESTROY), 1);
 	return (free(philos), free(args), free(philosophers), 0);
 }

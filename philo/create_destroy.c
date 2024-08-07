@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:13:05 by melshafi          #+#    #+#             */
-/*   Updated: 2024/08/06 13:19:31 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:39:15 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,46 +19,54 @@ int	set_philo_data(t_philos_data *philosophers, t_args *args, t_philo *philos)
 	philosophers->time.stop_printing = 0;
 	philosophers->args = args;
 	philosophers->philos = philos;
-	if (pthread_mutex_init(&philosophers->time.time_mutex, NULL) != 0)
-		return (free(philosophers), free(args), free(philos), 1);
-	if (pthread_mutex_init(&philosophers->death_mutex, NULL) != 0)
-		return (free(philosophers), free(args), free(philos), 1);
 	return (0);
 }
 
-int	destroy_threads(t_philo *philos, int num_of_philo)
+int	destroy_threads(t_philos_data *philosophers, int num_of_philo)
 {
 	int	count;
 
-	count = 0;
-	while (count < num_of_philo)
+	count = -1;
+	while (++count < num_of_philo)
 	{
-		if (pthread_join(philos[count].thread, NULL) != 0)
+		fprintf(stderr, "Killig thread (%d)\n", count);
+		if (pthread_join(philosophers->philos[count].thread, NULL))
 			return (1);
-		if (pthread_mutex_destroy(&philos[count].fork_mutex) != 0)
-			return (1);
-		if (pthread_mutex_destroy(&philos[count].data_mutex) != 0)
-			return (1);
-		count++;
 	}
-	if (pthread_mutex_destroy(&philos[--count].data->time.time_mutex) != 0)
+	fprintf(stderr, "All threads are dead\n");
+	count = -1;
+	while (++count < num_of_philo)
+	{
+		if (pthread_mutex_destroy(&philosophers->forks[count]))
+			return (1);
+	}
+	if (pthread_mutex_destroy(&philosophers->printer))
+		return (1);
+	if (pthread_mutex_destroy(&philosophers->eater))
+		return (1);
+	if (pthread_mutex_destroy(&philosophers->death))
 		return (1);
 	return (0);
 }
 
-int	init_mutex(t_philo *philos, int num_of_philo)
+int	init_mutex(t_philos_data *philosophers, int num_of_philo)
 {
 	int				count;
 
 	count = 0;
+	philosophers->forks = malloc(sizeof(pthread_mutex_t) * num_of_philo);
 	while (count < num_of_philo)
 	{
-		if (pthread_mutex_init(&philos[count].fork_mutex, NULL) != 0)
-			return (1);
-		if (pthread_mutex_init(&philos[count].data_mutex, NULL) != 0)
+		if (pthread_mutex_init(&philosophers->forks[count], NULL) != 0)
 			return (1);
 		count++;
 	}
+	if (pthread_mutex_init(&philosophers->eater, NULL) != 0)
+		return (1);
+	if (pthread_mutex_init(&philosophers->printer, NULL) != 0)
+		return (1);
+	if (pthread_mutex_init(&philosophers->death, NULL) != 0)
+		return (1);
 	return (0);
 }
 
@@ -91,7 +99,6 @@ void	create_philo(t_philo *philos, int num, t_philos_data *philosophers)
 {
 	philos->philo_num = num;
 	philos->data = philosophers;
-	philos->fork_flag = -1;
 	philos->meal_counter = 0;
 	philos->last_meal = 0;
 }
