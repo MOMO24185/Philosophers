@@ -12,37 +12,46 @@
 
 #include "./philo.h"
 
-static int	eat(t_philo *philo, int next)
+static int	eat(t_philo *philo, int first, int second)
 {
-	if (pthread_mutex_lock(&philo->data->forks[philo->philo_num]))
+	if (pthread_mutex_lock(&philo->data->forks[first]))
 		return (0);
 	if (!print_status(philo, "\033[1;36mHAS TAKEN A FORK\033[0m", 0))
-		return (0);
-	if (pthread_mutex_lock(&philo->data->forks[next]))
-		return (pthread_mutex_unlock(&philo->data->forks[philo->philo_num]), 0);
+		return (pthread_mutex_unlock(&philo->data->forks[first]), 0);
+	if (pthread_mutex_lock(&philo->data->forks[second]))
+		return (pthread_mutex_unlock(&philo->data->forks[first]), 0);
 	if (!print_status(philo, "\033[1;36mHAS TAKEN A FORK\033[0m", 0))
-		return (0);
+		return (pthread_mutex_unlock(&philo->data->forks[first]),
+		pthread_mutex_unlock(&philo->data->forks[second]), 0);
 	if (!print_status(philo, "\033[1;32mIS EATING\033[0m", 1))
-		return (0);
+		return (pthread_mutex_unlock(&philo->data->forks[first]),
+		pthread_mutex_unlock(&philo->data->forks[second]), 0);
 	if (!ft_usleep(philo->data->args->time_to_eat))
-		return (0);
+		return (pthread_mutex_unlock(&philo->data->forks[first]),
+		pthread_mutex_unlock(&philo->data->forks[second]), 0);
+	pthread_mutex_lock(&philo->data->eater);
 	philo->meal_counter++;
-	pthread_mutex_unlock(&philo->data->forks[philo->philo_num]);
-	pthread_mutex_unlock(&philo->data->forks[next]);
+	pthread_mutex_unlock(&philo->data->eater);
+	pthread_mutex_unlock(&philo->data->forks[first]);
+	pthread_mutex_unlock(&philo->data->forks[second]);
 	return (philo_sleep(philo));
 }
 
 int	philo_eat(t_philo *philo)
 {
-	int	next;
+	int	first;
+	int second;
 
-	next = philo->philo_num + 1;
-	if (next == philo->data->args->num_of_philo)
-		next = 0;
+	first = philo->philo_num;
+	second = philo->philo_num + 1;
+	if (second == philo->data->args->num_of_philo)
+		second = 0;
 	if (philo->data->args->num_of_philo == 1)
-		next = -1;
-	if (next != -1)
-		return (eat(philo, next));
+		second = -1;
+	if (second != -1 && first > second)
+		return (eat(philo, second, first));
+	else if (second != -1)
+		return (eat(philo, first, second));
 	return (0);
 }
 

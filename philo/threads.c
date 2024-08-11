@@ -41,7 +41,7 @@ void	*routine(void *var)
 		if (!ft_usleep(philo->data->args->time_to_eat))
 			return ((void *)0);
 	}
-	while (!wellness_check(philo))
+	while (!wellness_check(philo) && check_thread_continue(philo))
 	{
 		if (!philo_eat(philo))
 			break ;
@@ -88,7 +88,7 @@ int	wellness_check(t_philo	*philo)
 		pthread_mutex_lock(&philo->data->death);
 		philo->data->dead_thread_id = philo->philo_num;
 		pthread_mutex_unlock(&philo->data->death);
-		print_status(philo, "\033[1;31mIS DEAD\n\033[0m", -1);
+		print_status(philo, "\033[1;31mIS DEAD\033[0m", -1);
 		return (2);
 	}
 	else if (value == 3)
@@ -104,9 +104,11 @@ int	survival_conditions(t_philo *philo)
 	if (philo->data->dead_thread_id >= 0)
 		return (pthread_mutex_unlock(&philo->data->death), 3);
 	pthread_mutex_unlock(&philo->data->death);
+	pthread_mutex_lock(&philo->data->eater);
 	if (philo->data->args->num_to_eat > 0
 		&& philo->meal_counter >= philo->data->args->num_to_eat)
-		return (1);
+		return (pthread_mutex_unlock(&philo->data->eater), 1);
+	pthread_mutex_unlock(&philo->data->eater);
 	time = get_timestamp() - philo->data->time.start;
 	pthread_mutex_lock(&philo->data->eater);
 	if ((time - philo->last_meal

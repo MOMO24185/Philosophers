@@ -27,13 +27,13 @@ int	destroy_threads(t_philos_data *philosophers, int num_of_philo)
 	int	count;
 
 	count = -1;
+	printf("Killed threads\n");
 	while (++count < num_of_philo)
 	{
-		fprintf(stderr, "Killig thread (%d)\n", count);
 		if (pthread_join(philosophers->philos[count].thread, NULL))
 			return (1);
+		printf("Killed thread[%d]\n", count);
 	}
-	fprintf(stderr, "All threads are dead\n");
 	count = -1;
 	while (++count < num_of_philo)
 	{
