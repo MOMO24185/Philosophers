@@ -57,6 +57,8 @@ int	philo_eat(t_philo *philo)
 
 int	philo_sleep(t_philo *philo)
 {
+	if (wellness_check(philo))
+		return (0);
 	if (!print_status(philo, "\033[1;33mIS SLEEPING\033[0m", 0))
 		return (0);
 	if (!ft_usleep(philo->data->args->time_to_sleep))

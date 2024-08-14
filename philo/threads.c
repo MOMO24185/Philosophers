@@ -14,16 +14,10 @@
 
 void	check_death(t_philos_data *philosophers)
 {
-	int	i;
-
 	while (1)
 	{
-		i = -1;
-		while (++i < philosophers->args->num_of_philo)
-		{
-			if (wellness_check(&philosophers->philos[i]) == 2)
-				return ;
-		}
+		if (!check_thread_continue(&philosophers->philos[0]))
+			return ;
 		pthread_mutex_lock(&philosophers->death);
 		if (philosophers->dead_thread_id >= 0)
 			return ((void)pthread_mutex_unlock(&philosophers->death));
