@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 16:38:08 by melshafi          #+#    #+#             */
-/*   Updated: 2024/08/07 14:21:20 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/08/14 16:18:06 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ typedef struct s_int
 typedef struct s_time
 {
 	long long		start;
-	int				stop_printing;
 	u_int64_t		timestamp_ms;
 }	t_time;
 
@@ -71,6 +70,8 @@ typedef struct s_philos_data
 struct s_philo
 {
 	int				philo_num;
+	int				fork_taken;
+	int				is_eating;
 	u_int64_t		meal_counter;
 	u_int64_t		last_meal;
 	pthread_t		thread;
@@ -135,5 +136,11 @@ int				set_philo_data(t_philos_data *philosophers, t_args *args,
 int				print_status(t_philo *philo, char *msg, int is_eating);
 
 //Custom usleep for better accuracy and no delays
-int				ft_usleep(uint64_t sleep_time);
+int				ft_usleep(t_philo *philo, uint64_t sleep_time);
+
+//Locks the forks for a philosopher to eat
+int				lock_forks(t_philo *philo, int first, int right);
+
+//Checks if the philosopher is dead or if the program should continue
+int				check_death_continue(t_philo *philo);
 #endif

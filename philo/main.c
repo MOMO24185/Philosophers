@@ -6,7 +6,7 @@
 /*   By: melshafi <melshafi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 09:39:25 by melshafi          #+#    #+#             */
-/*   Updated: 2024/08/07 14:54:26 by melshafi         ###   ########.fr       */
+/*   Updated: 2024/08/14 16:23:12 by melshafi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,9 @@ int	main(int argc, char **argv)
 	args = set_args(argc, argv);
 	if (!args || args->num_of_philo == 0)
 		return (1);
-	if (args->num_of_philo < 0 || args->num_of_philo > 200
-		|| args->time_to_die < 60000 || args->time_to_eat < 60000
-		|| args->time_to_sleep < 60000)
+	if (args->num_of_philo < 0 || args->num_of_philo > 200)
 		return (free(args), printf("%s\n", ERR_ARGS), 1);
-	philos = malloc(args->num_of_philo * sizeof(t_philo));
+	philos = malloc((args->num_of_philo + 1) * sizeof(t_philo));
 	philosophers = malloc(sizeof(t_philos_data));
 	if (!philosophers || !philos)
 		return (free(args), free(philos), 1);
